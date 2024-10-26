@@ -20,7 +20,63 @@
     <div class="content">
         <h2>Commencez par explorer</h2>
         <p>Vous pouvez créer une annonce, rechercher des objets, et plus encore !</p>
-        <a href="/api/annonces" class="button">Voir les annonces</a>
+        <a href="/annonces" class="button">Voir les annonces</a>
     </div>
+    <h1>Créer une Nouvelle Annonce</h1>
+    <form id="annonceForm">
+        <label for="title">Titre:</label>
+        <input type="text" id="title" name="title" required><br>
+    
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea><br>
+    
+        <label for="etat">État de l'objet :</label>
+        <select id="etat" name="etat" required>
+            <option value="" disabled selected>Choisissez un état</option>
+            <option value="NEUF">Neuf</option>
+            <option value="OCCASION">Occasion</option>
+        </select>
+    
+        <label for="zone">Zone géographique:</label>
+        <input type="text" id="zone" name="zone" required><br>
+    
+        <label for="isHandDelivery">En main propre :</label>
+        <input type="checkbox" id="isHandDelivery" name="isHandDelivery"><br>
+        
+        
+        <button type="submit">Ajouter l'annonce</button>
+    </form>
+    <div id="message"></div>
+    
+    <script>
+        document.getElementById('annonceForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Empêche la soumission du formulaire par défaut
+            
+            const formData = new FormData(this);
+            const annonce = Object.fromEntries(formData.entries()); // Convertit FormData en objet
+    
+            fetch('/annonces', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(annonce)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la création de l\'annonce');
+                }
+                return response.text(); 
+            })
+            .then(data => {
+                document.getElementById('message').innerText = 'Annonce créée avec succès !';
+                
+            })
+            .catch(error => {
+                document.getElementById('message').innerText = error.message;
+            });
+        });
+    </script>
+    
 </body>
 </html>
