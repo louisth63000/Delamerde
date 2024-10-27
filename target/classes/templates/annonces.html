@@ -2,30 +2,41 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Liste des Annonces</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <h1>Liste des Annonces</h1>
-    
-    <div th:if="${#lists.isEmpty(annonces)}">
-        <p>Aucune annonce disponible pour le moment.</p>
+    <div th:if="${annonces.empty}">
+        <p>Aucune annonce n'est disponible pour le moment.</p>
     </div>
-
-    <ul th:if="${!#lists.isEmpty(annonces)}">
-        <li th:each="annonce : ${annonces}">
-            <h2 th:text="${annonce.title}">Titre de l'annonce</h2>
-            <p><strong>Description:</strong> <span th:text="${annonce.description}">Description de l'annonce</span></p>
-            <p><strong>État:</strong> <span th:text="${annonce.state}">État de l'objet</span></p>
-            <p><strong>Date de publication:</strong> <span th:text="${annonce.publicationDate}">Date</span></p>
-            <p><strong>Zone géographique:</strong> <span th:text="${annonce.zone}">Zone géographique</span></p>
-            <p><strong>Mode de don:</strong> 
-                <span th:text="${annonce.isHandDelivery ? 'En main propre' : 'Envoi possible'}"></span>
-            </p>
-            <!--- <p><strong>Mots-clés:</strong> 
-                <span th:each="keyword : ${annonce.keywords}" th:text="${keyword} + ', '">mot-clé</span>
-            </p> --->
-        </li>
-    </ul>
+    <div th:if="${!annonces.empty}">
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>État</th>
+                <th>Date de publication</th>
+                <th>Zone</th>
+                <th>En main propre</th>
+                <th>Mots-clés</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="annonce : ${annonces}">
+                <td th:text="${annonce.title}"></td>
+                <td th:text="${annonce.description}"></td>
+                <td th:text="${annonce.state}"></td>
+                <td th:text="${annonce.publicationDate}"></td>
+                <td th:text="${annonce.zone}"></td>
+                <td th:text="${annonce.isHandDelivery ? 'Oui' : 'Non'}"></td>
+                <td>
+                    <ul>
+                        <li th:each="keyword : ${annonce.keywords}" th:text="${keyword}"></li>
+                    </ul>
+                </td> 
+            </tr>
+        </tbody>
+    </table>
+    </div>
 </body>
 </html>

@@ -30,52 +30,105 @@
         <label for="description">Description:</label>
         <textarea id="description" name="description" required></textarea><br>
     
-        <label for="etat">État de l'objet :</label>
-        <select id="etat" name="etat" required>
+        <label for="state">État de l'objet :</label>
+        <select id="state" name="state" required>
             <option value="" disabled selected>Choisissez un état</option>
             <option value="NEUF">Neuf</option>
             <option value="OCCASION">Occasion</option>
         </select>
-    
-        <label for="zone">Zone géographique:</label>
-        <input type="text" id="zone" name="zone" required><br>
-    
+
+        <label for="publicationDate">Date de publication:</label>
+        <input type="datetime-local" id="publicationDate" name="publicationDate" required><br>
+
+        <label for="zone">Zone géographique :</label>
+        <select id="zone" name="zone" required>
+            <option value="" disabled selected>Choisissez une région</option>
+            <option value="Auvergne-Rhône-Alpes">Auvergne-Rhône-Alpes</option>
+            <option value="Bourgogne-Franche-Comté">Bourgogne-Franche-Comté</option>
+            <option value="Bretagne">Bretagne</option>
+            <option value="Centre-Val de Loire">Centre-Val de Loire</option>
+            <option value="Corse">Corse</option>
+            <option value="Grand Est">Grand Est</option>
+            <option value="Hauts-de-France">Hauts-de-France</option>
+            <option value="Île-de-France">Île-de-France</option>
+            <option value="Normandie">Normandie</option>
+            <option value="Nouvelle-Aquitaine">Nouvelle-Aquitaine</option>
+            <option value="Occitanie">Occitanie</option>
+            <option value="Pays de la Loire">Pays de la Loire</option>
+            <option value="Provence-Alpes-Côte d'Azur">Provence-Alpes-Côte d'Azur</option>
+        </select>
         <label for="isHandDelivery">En main propre :</label>
-        <input type="checkbox" id="isHandDelivery" name="isHandDelivery"><br>
-        
-        
+        <div style="display: inline;">
+        <input type="radio" id="yes" name="isHandDelivery" value="true">
+        <label for="yes">Oui</label>
+        <input type="radio" id="no" name="isHandDelivery" value="false">
+        <label for="no">Non</label>
+        </div><br>
+
+        <label for="keywordInput">Mots-clés :</label>
+        <input type="text" id="keywordInput" placeholder="Entrez un mot-clé">
+        <button type="button" onclick="addKeyword()">Ajouter mot-clé</button>
+
+        <ul id="keywordsList"></ul>
+        <div id="keywordsHiddenFields"></div>
         <button type="submit">Ajouter l'annonce</button>
     </form>
     <div id="message"></div>
     
     <script>
-        document.getElementById('annonceForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Empêche la soumission du formulaire par défaut
-            
-            const formData = new FormData(this);
-            const annonce = Object.fromEntries(formData.entries()); // Convertit FormData en objet
-    
-            fetch('/annonces', {
-                method: 'POST',
+        const form = document.getElementById("annonceForm");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault(); 
+
+            const formData = new FormData(form);
+            const keywords = [];
+            formData.getAll("keywords").forEach(keyword => keywords.push(keyword));
+
+            const data = {
+                title: formData.get("title"),
+                description: formData.get("description"),
+                state: formData.get("state"),
+                publicationDate: formData.get("publicationDate"),
+                zone: formData.get("zone"),
+                isHandDelivery: formData.get("isHandDelivery") === "on",
+                keywords: keywords
+            };
+
+            const response = await fetch("/annonces", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json"
                 },
-                body: JSON.stringify(annonce)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la création de l\'annonce');
-                }
-                return response.text(); 
-            })
-            .then(data => {
-                document.getElementById('message').innerText = 'Annonce créée avec succès !';
-                
-            })
-            .catch(error => {
-                document.getElementById('message').innerText = error.message;
+                body: JSON.stringify(data)
             });
+
+            if (response.ok) {
+                alert("Annonce créée avec succès !");
+            } else {
+                alert("Erreur lors de la création de l'annonce.");
+            }
         });
+
+        function addKeyword() {
+        const keywordInput = document.getElementById("keywordInput");
+        const keyword = keywordInput.value.trim();
+
+        if (keyword) {
+            
+            const keywordsList = document.getElementById("keywordsList");
+            const li = document.createElement("li");
+            li.textContent = keyword;
+            keywordsList.appendChild(li);
+            const keywordsHiddenFields = document.getElementById("keywordsHiddenFields");
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "keywords"; 
+            input.value = keyword;
+            keywordsHiddenFields.appendChild(input);
+            keywordInput.value = "";
+        }
+    }
     </script>
     
 </body>

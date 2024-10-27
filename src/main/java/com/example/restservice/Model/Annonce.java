@@ -1,8 +1,12 @@
 package com.example.restservice.Model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,17 +22,27 @@ public class Annonce {
     private String title;
     private String description;
     private String state;
-    private LocalDate publicationDate;
+    
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime publicationDate;
+    
     private String zone;
     private boolean isHandDelivery;
 
-    /*@ElementCollection
-    private List<String> keywords =new ArrayList<>();*/
-    private String keyword;
+    @ElementCollection
+    private List<String> keywords =new ArrayList<>();
+    //private String keyword;
 
     
     public Annonce() {}
-
+    public Annonce(String title, String description, String state, String zone, boolean isHandDelivery) {
+        this.title = title;
+        this.description = description;
+        this.state = state;
+        this.zone = zone;
+        this.isHandDelivery = isHandDelivery;
+        //this.keywords = keywords;
+    }
 
 
     
