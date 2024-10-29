@@ -5,3 +5,4 @@
 /home/waassafiri/shared/TpDonnation/src/main/java/com/example/restservice/Repository/AnnonceRepository.java
 /home/waassafiri/shared/TpDonnation/src/main/java/com/example/restservice/RestServiceApplication.java
 /home/waassafiri/shared/TpDonnation/src/main/java/com/example/restservice/Service/AnnonceService.java
+/home/waassafiri/shared/TpDonnation/src/main/java/com/example/restservice/specifications/AnnonceSpecification.java

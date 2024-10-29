@@ -4,13 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plateforme de Dons</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
-        header { background-color: #4CAF50; color: white; padding: 1rem; text-align: center; }
-        .content { margin: 2rem auto; width: 80%; max-width: 600px; }
-        .button { background-color: #4CAF50; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 5px; }
-        .button:hover { background-color: #45a049; }
-    </style>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <header>
@@ -58,12 +52,10 @@
             <option value="Provence-Alpes-Côte d'Azur">Provence-Alpes-Côte d'Azur</option>
         </select>
         <label for="isHandDelivery">En main propre :</label>
-        <div style="display: inline;">
-        <input type="radio" id="yes" name="isHandDelivery" value="true">
-        <label for="yes">Oui</label>
-        <input type="radio" id="no" name="isHandDelivery" value="false">
-        <label for="no">Non</label>
-        </div><br>
+        <div>
+            <label><input type="radio" id="yes" name="isHandDelivery" value="true"> Oui</label>
+            <label><input type="radio" id="no" name="isHandDelivery" value="false"> Non</label>
+        </div>
 
         <label for="keywordInput">Mots-clés :</label>
         <input type="text" id="keywordInput" placeholder="Entrez un mot-clé">
@@ -104,7 +96,11 @@
             });
 
             if (response.ok) {
+                form.reset();
+                
+
                 alert("Annonce créée avec succès !");
+                
             } else {
                 alert("Erreur lors de la création de l'annonce.");
             }
@@ -129,6 +125,7 @@
             keywordInput.value = "";
         }
     }
+    
     </script>
     
 </body>

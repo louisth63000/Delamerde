@@ -57,6 +57,18 @@ public class AnnonceController {
     public List<Annonce> searchAnnonces(@RequestParam List<String> keywords) {
         return annonceService.searchAnnoncesByKeywords(keywords);
     }*/
+    @GetMapping("/search")
+    public String searchAnnonces(
+        @RequestParam(required = false) String zone,
+        @RequestParam(required = false) String state,
+        @RequestParam(required = false) List<String> keywords,
+        Model model) {
+        List<Annonce> annonces = annonceService.searchAnnonces(zone, state, keywords);
+        System.out.println(annonces.isEmpty());
+        model.addAttribute("annonces", annonces);
+        return "searchAnnonce"; 
+    }
+
 }
 
 

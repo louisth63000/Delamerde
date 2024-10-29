@@ -35,15 +35,24 @@ public class Annonce {
 
     
     public Annonce() {}
+    public Annonce(String title, String description, String state, String zone, boolean isHandDelivery, List<String> keywords) {
+        this.title = title;
+        this.description = description;
+        this.state = state;
+        this.zone = zone;
+        this.isHandDelivery = isHandDelivery;
+        this.keywords=keywords;
+       
+    }
     public Annonce(String title, String description, String state, String zone, boolean isHandDelivery) {
         this.title = title;
         this.description = description;
         this.state = state;
         this.zone = zone;
         this.isHandDelivery = isHandDelivery;
-        //this.keywords = keywords;
+        
+        
     }
-
 
     
 }
