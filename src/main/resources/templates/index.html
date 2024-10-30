@@ -31,8 +31,8 @@
             <option value="OCCASION">Occasion</option>
         </select>
 
-        <label for="publicationDate">Date de publication:</label>
-        <input type="datetime-local" id="publicationDate" name="publicationDate" required><br>
+        <label for="publicationDate">Date de publication :</label>
+        <input type="datetime-local" id="publicationDate" name="publicationDate" readonly><br>
 
         <label for="zone">Zone géographique :</label>
         <select id="zone" name="zone" required>
@@ -67,6 +67,7 @@
     </form>
     <div id="message"></div>
     
+    
     <script>
         const form = document.getElementById("annonceForm");
 
@@ -84,7 +85,8 @@
                 publicationDate: formData.get("publicationDate"),
                 zone: formData.get("zone"),
                 isHandDelivery: formData.get("isHandDelivery") === "on",
-                keywords: keywords
+                keywords: keywords,
+                last5days
             };
 
             const response = await fetch("/annonces", {
@@ -125,7 +127,12 @@
             keywordInput.value = "";
         }
     }
-    
+    window.addEventListener("load", () => {
+        const publicationDateInput = document.getElementById("publicationDate");
+        const now = new Date();
+        const formattedDate = now.toISOString().slice(0, 16); 
+        publicationDateInput.value = formattedDate;
+    });
     </script>
     
 </body>

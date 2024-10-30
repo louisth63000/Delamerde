@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 import com.example.restservice.Model.Annonce;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+
 
 public class AnnonceSpecification {
 
@@ -48,4 +50,23 @@ public class AnnonceSpecification {
             }
         };
     }
+    public static Specification<Annonce> publishedInLastHours() {
+        return (root, query, cb) -> {
+            LocalDateTime OneHourAgo = LocalDateTime.now().minusHours(1);
+            return cb.greaterThanOrEqualTo(root.get("publicationDate"), OneHourAgo);
+        };
+    }
+    public static Specification<Annonce> publishedInLast5Days() {
+        return (root, query, cb) -> {
+            LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(5);
+            return cb.greaterThanOrEqualTo(root.get("publicationDate"), fiveDaysAgo);
+        };
+    }
+    public static Specification<Annonce> publishedInLast30Days() {
+        return (root, query, cb) -> {
+            LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+            return cb.greaterThanOrEqualTo(root.get("publicationDate"), thirtyDaysAgo);
+        };
+    }
+
 }

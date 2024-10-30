@@ -1,6 +1,5 @@
 package com.example.restservice.Model;
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +50,15 @@ public class Annonce {
         this.zone = zone;
         this.isHandDelivery = isHandDelivery;
         
+        
+    }
+    public Annonce(String title, String description, String state, LocalDateTime publicationDate, String zone, boolean isHandDelivery) {
+        this.title = title;
+        this.description = description;
+        this.state = state;
+        this.zone = zone;
+        this.isHandDelivery = isHandDelivery;
+        this.publicationDate=publicationDate;
         
     }
 

@@ -9,6 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.example.restservice.specifications.AnnonceSpecification;
 import com.example.restservice.Model.Annonce;
 import com.example.restservice.Repository.AnnonceRepository;
+import java.time.LocalDateTime;
+
+import org.hibernate.type.descriptor.java.LocalDateTimeJavaType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -21,8 +24,118 @@ import java.util.List;
 
 @DataJpaTest
 public class AnnonceServiceTest {
+    @Autowired
+    private AnnonceRepository annonceRepository;
+    
+@Test
+void testSearchState(){
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
 
-    /*@Mock
+    annonceRepository.save(annonce1);
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF"));
+
+    List<Annonce> results = annonceRepository.findAll(spec);
+    assertThat(results).contains(annonce1);
+}
+@Test
+void testSearchAll(){
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
+    annonceRepository.save(annonce1);
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone("Occitanie")).and(AnnonceSpecification.hasAllKeywords(List.of("lourd")));
+
+    List<Annonce> results = annonceRepository.findAll(spec);
+    assertThat(results).contains(annonce1);
+}
+@Test
+void testSearchKeywordsWhoDontBelong(){
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
+    annonceRepository.save(annonce1);
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone("Occitanie")).and(AnnonceSpecification.hasAllKeywords(List.of("lourd","leger","fort")));
+
+    List<Annonce> results = annonceRepository.findAll(spec);
+    assertThat(results.isEmpty()).isTrue();
+}
+@Test
+void testSearchKeywordsAlone(){
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
+    annonceRepository.save(annonce1);
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasAllKeywords(List.of("lourd","leger")));
+
+    List<Annonce> results = annonceRepository.findAll(spec);
+    assertThat(results.contains(annonce1));
+}
+@Test
+void testSearchZoneAlone(){
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
+    annonceRepository.save(annonce1);
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone("Occitanie"));
+
+    List<Annonce> results = annonceRepository.findAll(spec);
+    assertThat(results.contains(annonce1));
+}
+@Test
+void testSearchZoneWhoDontBelong(){
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
+    annonceRepository.save(annonce1);
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone("Pays de la Loire")).and(AnnonceSpecification.hasEtat("NEUF"));
+
+    List<Annonce> results = annonceRepository.findAll(spec);
+    assertThat(results.isEmpty()).isTrue();
+}
+@Test
+void testSearchLast5DaysWhoDontBelong(){
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusDays(5).minusMinutes(1),"Occitanie", true);
+    annonceRepository.save(annonce1);
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLast5Days());
+
+    List<Annonce> results = annonceRepository.findAll(spec);
+    assertThat(results.isEmpty()).isTrue();
+}
+@Test
+void testSearchLast5Days(){
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusDays(5).minusMinutes(0),"Occitanie", true);
+    annonceRepository.save(annonce1);
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLast5Days());
+
+    List<Annonce> results = annonceRepository.findAll(spec);
+    assertThat(results.contains(annonce1));
+}
+@Test
+void testSearchLastHour(){
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusHours(1).minusMinutes(0),"Occitanie", true);
+    annonceRepository.save(annonce1);
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLast5Days());
+
+    List<Annonce> results = annonceRepository.findAll(spec);
+    assertThat(results.contains(annonce1));
+}
+@Test
+void testSearchLastHourWhoDontBelong(){
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusHours(1).minusMinutes(1),"Occitanie", true);
+    annonceRepository.save(annonce1);
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLast5Days());
+
+    List<Annonce> results = annonceRepository.findAll(spec);
+    assertThat(results.contains(annonce1));
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*@Mock
     private AnnonceRepository annonceRepository;
 
     private AnnonceService annonceService;
@@ -32,8 +145,6 @@ public class AnnonceServiceTest {
         MockitoAnnotations.openMocks(this);
         annonceService = new AnnonceService(annonceRepository);
     } */
-    @Autowired
-    private AnnonceRepository annonceRepository;
 /*
     @Test
 void testSearchAnnoncesByZone() {
@@ -100,59 +211,3 @@ void testSearchAnnoncesByKeywordsWhoDontBelong() {
     assertEquals(1, result.size());
     assertTrue(result.isEmpty());
 } */
-@Test
-void testSearchState(){
-    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
-
-    annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF"));
-
-    List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results).contains(annonce1);
-}
-@Test
-void testSearchAll(){
-    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
-    annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone("Occitanie")).and(AnnonceSpecification.hasAllKeywords(List.of("lourd")));
-
-    List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results).contains(annonce1);
-}
-@Test
-void testSearchKeywordsWhoDontBelong(){
-    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
-    annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone("Occitanie")).and(AnnonceSpecification.hasAllKeywords(List.of("lourd","leger","fort")));
-
-    List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results.isEmpty()).isTrue();
-}
-@Test
-void testSearchKeywordsAlone(){
-    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
-    annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasAllKeywords(List.of("lourd","leger")));
-
-    List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results.contains(annonce1));
-}
-@Test
-void testSearchZoneAlone(){
-    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
-    annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone("Occitanie"));
-
-    List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results.contains(annonce1));
-}
-@Test
-void testSearchZoneWhoDontBelong(){
-    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
-    annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone("Pays de la Loire")).and(AnnonceSpecification.hasEtat("NEUF"));
-
-    List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results.isEmpty()).isTrue();
-}
-}

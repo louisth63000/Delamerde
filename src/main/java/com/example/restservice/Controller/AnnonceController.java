@@ -47,16 +47,7 @@ public class AnnonceController {
         annonceService.createAnnonce(annonce);
         return "redirect:/annonces"; 
     }
-    /*@PostMapping
-    public ResponseEntity<String> createAnnonce(@RequestBody Annonce annonce) {
-        annonceService.createAnnonce(annonce);
-        return ResponseEntity.ok("Annonce créée avec succès !");
-    }*/
     
-   /* @GetMapping("/search")
-    public List<Annonce> searchAnnonces(@RequestParam List<String> keywords) {
-        return annonceService.searchAnnoncesByKeywords(keywords);
-    }*/
     @GetMapping("/search")
     public String searchAnnonces(
         @RequestParam(required = false) String zone,
@@ -64,7 +55,6 @@ public class AnnonceController {
         @RequestParam(required = false) List<String> keywords,
         Model model) {
         List<Annonce> annonces = annonceService.searchAnnonces(zone, state, keywords);
-        System.out.println(annonces.isEmpty());
         model.addAttribute("annonces", annonces);
         return "searchAnnonce"; 
     }

@@ -29,12 +29,15 @@ public class AnnonceService {
     }
     public List<Annonce> searchAnnonces(String zone, String state, List<String> keywords) {
         Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone(zone))
-                                                   .and(AnnonceSpecification.hasEtat(state));
+                                                   .and(AnnonceSpecification.hasEtat(state))
+                                                   .and(AnnonceSpecification.publishedInLastHours())
+                                                   .and(AnnonceSpecification.publishedInLast5Days())
+                                                   .and(AnnonceSpecification.publishedInLast30Days());
 
         if (keywords != null && !keywords.isEmpty()) {
             spec = spec.and(AnnonceSpecification.hasAllKeywords(keywords));
         }
-
+        
         return annonceRepository.findAll(spec);             
         //return annonceRepository.searchAnnonces(zone,state,keywords);
     }
