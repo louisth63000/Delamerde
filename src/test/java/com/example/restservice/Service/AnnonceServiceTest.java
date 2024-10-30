@@ -35,7 +35,7 @@ void testSearchState(){
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF"));
 
     List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results).contains(annonce1);
+    assertThat(results.contains(annonce1)).isTrue();
 }
 @Test
 void testSearchAll(){
@@ -45,7 +45,7 @@ void testSearchAll(){
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone(selectedZones)).and(AnnonceSpecification.hasAllKeywords(List.of("lourd")));
 
     List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results).contains(annonce1);
+    assertThat(results.contains(annonce1)).isTrue();
 }
 @Test
 void testSearchKeywordsWhoDontBelong(){
@@ -64,7 +64,7 @@ void testSearchKeywordsAlone(){
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasAllKeywords(List.of("lourd","leger")));
 
     List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results.contains(annonce1));
+    assertThat(results.contains(annonce1)).isTrue();
 }
 @Test
 void testSearchZoneAlone(){
@@ -74,7 +74,7 @@ void testSearchZoneAlone(){
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone(selectedZones));
 
     List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results.contains(annonce1));
+    assertThat(results.contains(annonce1)).isTrue();
 }
 @Test
 void testSearchZoneWhoDontBelong(){
@@ -97,30 +97,30 @@ void testSearchLast5DaysWhoDontBelong(){
 }
 @Test
 void testSearchLast5Days(){
-    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusDays(5).minusMinutes(0),"Occitanie", true);
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusDays(4).minusMinutes(59),"Occitanie", true);
     annonceRepository.save(annonce1);
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLast5Days());
 
     List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results.contains(annonce1));
+    assertThat(results.contains(annonce1)).isTrue();
 }
 @Test
 void testSearchLastHour(){
-    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusHours(1).minusMinutes(0),"Occitanie", true);
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusMinutes(59),"Occitanie", true);
     annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLast5Days());
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLastHours());
 
     List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results.contains(annonce1));
+    assertThat(results.contains(annonce1)).isTrue();
 }
 @Test
 void testSearchLastHourWhoDontBelong(){
-    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusHours(1).minusMinutes(1),"Occitanie", true);
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusMinutes(60),"Occitanie", true);
     annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLast5Days());
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLastHours());
 
     List<Annonce> results = annonceRepository.findAll(spec);
-    assertThat(results.contains(annonce1));
+    assertThat(results.isEmpty()).isTrue();
 }
 }
 

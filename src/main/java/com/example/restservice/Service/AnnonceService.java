@@ -34,13 +34,14 @@ public class AnnonceService {
         if (keywords != null && !keywords.isEmpty()) {
             spec = spec.and(AnnonceSpecification.hasAllKeywords(keywords));
         }
-        if(date == "1hour"){
+        if("1hour".equals(date)){
+            System.out.println("testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt");
             spec =spec.and(AnnonceSpecification.publishedInLastHours());
         }
-        if(date == "5days"){
+        if("5days".equals(date)){
             spec =spec.and(AnnonceSpecification.publishedInLast5Days());
         }
-        if(date == "5days"){
+        if("30days".equals(date)){
             spec =spec.and(AnnonceSpecification.publishedInLast30Days());
         }
         return annonceRepository.findAll(spec);             
