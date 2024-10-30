@@ -35,7 +35,7 @@ public class AnnonceService {
             spec = spec.and(AnnonceSpecification.hasAllKeywords(keywords));
         }
         if("1hour".equals(date)){
-            System.out.println("testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt");
+            
             spec =spec.and(AnnonceSpecification.publishedInLastHours());
         }
         if("5days".equals(date)){

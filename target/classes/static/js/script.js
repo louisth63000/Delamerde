@@ -27,8 +27,8 @@ const form = document.getElementById("annonceForm");
 
             if (response.ok) {
                 form.reset();
-                
-
+                resetKeywords();
+                loadKeywords();
                 alert("Annonce créée avec succès !");
                 
             } else {
@@ -54,6 +54,16 @@ const form = document.getElementById("annonceForm");
             keywordsHiddenFields.appendChild(input);
             keywordInput.value = "";
         }
+    }
+    function resetKeywords() {
+        const keywordsList = document.getElementById("keywordsList");
+        const keywordsHiddenFields = document.getElementById("keywordsHiddenFields");
+        
+        
+        keywordsList.innerHTML = "";
+        
+        
+        keywordsHiddenFields.innerHTML = "";
     }
     window.addEventListener("load", () => {
         const publicationDateInput = document.getElementById("publicationDate");
@@ -82,4 +92,4 @@ const form = document.getElementById("annonceForm");
         }
     }
 
-    window.onload = loadKeywords;
+    
