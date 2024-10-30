@@ -31,19 +31,26 @@ public class AnnonceSpecification {
     }
     
 
-    public static Specification<Annonce> hasZone(String zone) {
+    public static Specification<Annonce> hasZone(String[] zones) {
         return (root, query, cb) -> {
-            if (zone == null) {
+            if (zones == null || zones.length == 0) {
                 return cb.conjunction(); 
             } else {
-                return cb.equal(cb.lower(root.get("zone")), zone.toLowerCase()); 
+                
+                Predicate[] predicates = new Predicate[zones.length];
+                for (int i = 0; i < zones.length; i++) {
+                    predicates[i] = cb.equal(cb.lower(root.get("zone")), zones[i].toLowerCase());
+                }
+                
+                return cb.or(predicates);
             }
         };
     }
+    
 
     public static Specification<Annonce> hasEtat(String state) {
         return (root, query, cb) -> {
-            if (state == null) {
+            if (state == null || state=="") {
                 return cb.conjunction(); 
             } else {
                 return cb.equal(cb.lower(root.get("state")), state.toLowerCase()); 

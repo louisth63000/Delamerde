@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plateforme de Dons</title>
     <link rel="stylesheet" href="/css/styles.css">
+    
 </head>
 <body>
     <header>
         <h1>Bienvenue sur la Plateforme de Dons</h1>
-        <p>Proposez et trouvez des objets en don facilement !</p>
+        <p>Proposez et trouvez des objets facilement !</p>
     </header>
     <div class="content">
         <h2>Commencez par explorer</h2>
@@ -67,73 +68,55 @@
     </form>
     <div id="message"></div>
     
-    
-    <script>
-        const form = document.getElementById("annonceForm");
-
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault(); 
-
-            const formData = new FormData(form);
-            const keywords = [];
-            formData.getAll("keywords").forEach(keyword => keywords.push(keyword));
-
-            const data = {
-                title: formData.get("title"),
-                description: formData.get("description"),
-                state: formData.get("state"),
-                publicationDate: formData.get("publicationDate"),
-                zone: formData.get("zone"),
-                isHandDelivery: formData.get("isHandDelivery") === "on",
-                keywords: keywords,
-                last5days
-            };
-
-            const response = await fetch("/annonces", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (response.ok) {
-                form.reset();
-                
-
-                alert("Annonce créée avec succès !");
-                
-            } else {
-                alert("Erreur lors de la création de l'annonce.");
-            }
-        });
-
-        function addKeyword() {
-        const keywordInput = document.getElementById("keywordInput");
-        const keyword = keywordInput.value.trim();
-
-        if (keyword) {
+    <div class="search-container">
+        <h2>Rechercher des annonces</h2>
+        <form id="searchForm" action="/annonces/search" method="GET">
             
-            const keywordsList = document.getElementById("keywordsList");
-            const li = document.createElement("li");
-            li.textContent = keyword;
-            keywordsList.appendChild(li);
-            const keywordsHiddenFields = document.getElementById("keywordsHiddenFields");
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "keywords"; 
-            input.value = keyword;
-            keywordsHiddenFields.appendChild(input);
-            keywordInput.value = "";
-        }
-    }
-    window.addEventListener("load", () => {
-        const publicationDateInput = document.getElementById("publicationDate");
-        const now = new Date();
-        const formattedDate = now.toISOString().slice(0, 16); 
-        publicationDateInput.value = formattedDate;
-    });
-    </script>
+            
+            <label for="state">État :</label>
+            <select id="state" name="state">
+                <option value="">-- Choisir un état --</option>
+                <option value="NEUF">Neuf</option>
+                <option value="OCCASION">Occasion</option>
+            </select>
     
+            <!-- Zones géographiques -->
+            <label for="zone">Zone géographique :</label>
+            <select id="zone" name="zone" multiple>
+                <option value="Auvergne-Rhône-Alpes">Auvergne-Rhône-Alpes</option>
+                <option value="Bourgogne-Franche-Comté">Bourgogne-Franche-Comté</option>
+                <option value="Bretagne">Bretagne</option>
+                <option value="Centre-Val de Loire">Centre-Val de Loire</option>
+                <option value="Corse">Corse</option>
+                <option value="Grand Est">Grand Est</option>
+                <option value="Hauts-de-France">Hauts-de-France</option>
+                <option value="Île-de-France">Île-de-France</option>
+                <option value="Normandie">Normandie</option>
+                <option value="Nouvelle-Aquitaine">Nouvelle-Aquitaine</option>
+                <option value="Occitanie">Occitanie</option>
+                <option value="Pays de la Loire">Pays de la Loire</option>
+                <option value="Provence-Alpes-Côte d'Azur">Provence-Alpes-Côte d'Azur</option>
+            </select><br>
+    
+           
+            <label for="keywords">Mots-clés :</label>
+            <select id="keywords" name="keywords" multiple>
+                
+                
+            </select><br>
+    
+            
+            <label for="date">Filtrer par date :</label>
+            <select id="date" name="date">
+                <option value="">Toutes les dates</option>
+                <option value="5days">Derniers 5 jours</option>
+                <option value="1hour">Dernière heure</option>
+            </select><br>
+    
+            <button type="submit">Rechercher</button>
+        </form>
+    </div>
+    
+    <script src="js/script.js"></script>
 </body>
 </html>

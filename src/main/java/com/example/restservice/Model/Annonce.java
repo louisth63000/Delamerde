@@ -30,7 +30,7 @@ public class Annonce {
 
     @ElementCollection
     private List<String> keywords =new ArrayList<>();
-    //private String keyword;
+    
 
     
     public Annonce() {}

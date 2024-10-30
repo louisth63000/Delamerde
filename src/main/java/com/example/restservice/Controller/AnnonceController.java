@@ -2,6 +2,9 @@ package com.example.restservice.Controller;
 
 import com.example.restservice.Model.Annonce;
 import com.example.restservice.Service.AnnonceService;
+import com.example.restservice.Repository.AnnonceRepository;
+
+//import org.hibernate.mapping.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +22,11 @@ import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Controller
 @RequestMapping("/annonces")
@@ -29,6 +35,8 @@ public class AnnonceController {
     @Autowired
     private AnnonceService annonceService;
 
+    @Autowired
+    private AnnonceRepository annonceRepository;
     
     @GetMapping
     public Object getAllAnnonces(HttpServletRequest request, Model model) {
@@ -50,15 +58,24 @@ public class AnnonceController {
     
     @GetMapping("/search")
     public String searchAnnonces(
-        @RequestParam(required = false) String zone,
+        @RequestParam(required = false) String[] zone,
         @RequestParam(required = false) String state,
         @RequestParam(required = false) List<String> keywords,
+        @RequestParam(required = false) String date,
         Model model) {
-        List<Annonce> annonces = annonceService.searchAnnonces(zone, state, keywords);
+        List<Annonce> annonces = annonceService.searchAnnonces(zone, state, keywords,date);
         model.addAttribute("annonces", annonces);
         return "searchAnnonce"; 
     }
+    @GetMapping("/api/keywords")
+    public ResponseEntity<Set<String>> getKeywords() {
 
+        List<Annonce> annonces = annonceRepository.findAll();
+        Set<String> keywords = annonces.stream()
+                .flatMap(annonce -> annonce.getKeywords().stream()) 
+                .collect(Collectors.toSet()); 
+        return ResponseEntity.ok(keywords);
+    }
 }
 
 

@@ -27,17 +27,22 @@ public class AnnonceService {
     public List<Annonce> getAllAnnonces() {
         return annonceRepository.findAll();
     }
-    public List<Annonce> searchAnnonces(String zone, String state, List<String> keywords) {
+    public List<Annonce> searchAnnonces(String[] zone, String state, List<String> keywords, String date) {
         Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone(zone))
-                                                   .and(AnnonceSpecification.hasEtat(state))
-                                                   .and(AnnonceSpecification.publishedInLastHours())
-                                                   .and(AnnonceSpecification.publishedInLast5Days())
-                                                   .and(AnnonceSpecification.publishedInLast30Days());
+                                                   .and(AnnonceSpecification.hasEtat(state));
 
         if (keywords != null && !keywords.isEmpty()) {
             spec = spec.and(AnnonceSpecification.hasAllKeywords(keywords));
         }
-        
+        if(date == "1hour"){
+            spec =spec.and(AnnonceSpecification.publishedInLastHours());
+        }
+        if(date == "5days"){
+            spec =spec.and(AnnonceSpecification.publishedInLast5Days());
+        }
+        if(date == "5days"){
+            spec =spec.and(AnnonceSpecification.publishedInLast30Days());
+        }
         return annonceRepository.findAll(spec);             
         //return annonceRepository.searchAnnonces(zone,state,keywords);
     }

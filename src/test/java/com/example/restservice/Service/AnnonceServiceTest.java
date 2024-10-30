@@ -41,7 +41,8 @@ void testSearchState(){
 void testSearchAll(){
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
     annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone("Occitanie")).and(AnnonceSpecification.hasAllKeywords(List.of("lourd")));
+    String[] selectedZones = {"Pays de la Loire","Occitanie"};
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone(selectedZones)).and(AnnonceSpecification.hasAllKeywords(List.of("lourd")));
 
     List<Annonce> results = annonceRepository.findAll(spec);
     assertThat(results).contains(annonce1);
@@ -50,7 +51,8 @@ void testSearchAll(){
 void testSearchKeywordsWhoDontBelong(){
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
     annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone("Occitanie")).and(AnnonceSpecification.hasAllKeywords(List.of("lourd","leger","fort")));
+    String[] selectedZones = {"Pays de la Loire","Occitanie"};
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone(selectedZones)).and(AnnonceSpecification.hasAllKeywords(List.of("lourd","leger","fort")));
 
     List<Annonce> results = annonceRepository.findAll(spec);
     assertThat(results.isEmpty()).isTrue();
@@ -66,9 +68,10 @@ void testSearchKeywordsAlone(){
 }
 @Test
 void testSearchZoneAlone(){
-    Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
+    Annonce annonce1 = new Annonce("title3", "description3", "NEUF","Occitanie",true, List.of("lourd", "leger"));
     annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone("Occitanie"));
+    String[] selectedZones = {"Occitanie"};
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone(selectedZones));
 
     List<Annonce> results = annonceRepository.findAll(spec);
     assertThat(results.contains(annonce1));
@@ -77,7 +80,8 @@ void testSearchZoneAlone(){
 void testSearchZoneWhoDontBelong(){
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
     annonceRepository.save(annonce1);
-    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone("Pays de la Loire")).and(AnnonceSpecification.hasEtat("NEUF"));
+    String[] selectedZones = {"Pays de la Loire","Normandie"};
+    Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone(selectedZones)).and(AnnonceSpecification.hasEtat("NEUF"));
 
     List<Annonce> results = annonceRepository.findAll(spec);
     assertThat(results.isEmpty()).isTrue();
