@@ -6,6 +6,7 @@ import com.example.restservice.Repository.AnnonceRepository;
 
 //import org.hibernate.mapping.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,7 +50,8 @@ public class AnnonceController {
         model.addAttribute("annonces", annonces);
         return "annonces"; 
     }
-    
+
+    //@PreAuthorize("hasRole('USER')")
     @PostMapping
     public String createAnnonce(@RequestBody Annonce annonce) {
         annonceService.createAnnonce(annonce);
