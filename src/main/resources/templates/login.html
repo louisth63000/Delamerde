@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login & Register</title>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit" onclick="submitLogin(event)">Login</button>
+        </form>
+    
+        <hr>
+    
+        <h2>Register</h2>
+        <form action="/api/register" method="post">
+            <label for="registerUsername">Username:</label>
+            <input type="text" id="registerUsername" name="username" required>
+            
+            <label for="registerEmail">Email:</label>
+            <input type="email" id="registerEmail" name="email" required>
+            
+            <label for="registerPassword">Password:</label>
+            <input type="password" id="registerPassword" name="password" required>
+            
+            <button type="submit" onclick="submitRegister()">Register</button>
+        </form>
+    </div>
+    
+    <script>
+        
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    alert('Login Failed');
+                    throw new Error('Login failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                
+                localStorage.setItem('jwtToken', data.token);
+                alert('Login successful!');
+                window.location.href="/";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+
+
+        
+        async function submitRegister() {
+            event.preventDefault();
+            const registerData = {
+                username: document.getElementById("registerUsername").value,
+                email: document.getElementById("registerEmail").value,
+                password: document.getElementById("registerPassword").value
+            };
+
+            try {
+                const response = await fetch("/api/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(registerData)
+                });
+
+                if (response.ok) {
+                    alert("Registration successful!");
+                    document.getElementById("registerForm").reset();
+                } else {
+                    const errorData = await response.json();
+                    alert("Registration failed: " + errorData.message);
+                }
+            } catch (error) {
+                alert("An error occurred: " + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

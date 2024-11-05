@@ -4,28 +4,21 @@ import com.example.restservice.Model.Annonce;
 import com.example.restservice.Service.AnnonceService;
 import com.example.restservice.Repository.AnnonceRepository;
 
-//import org.hibernate.mapping.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
-//import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 
 @Controller

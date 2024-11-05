@@ -4,6 +4,7 @@ const form = document.getElementById("annonceForm");
             e.preventDefault(); 
 
             const formData = new FormData(form);
+            const token = localStorage.getItem('jwtToken');
             const keywords = [];
             formData.getAll("keywords").forEach(keyword => keywords.push(keyword));
 
@@ -20,7 +21,8 @@ const form = document.getElementById("annonceForm");
             const response = await fetch("/annonces", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer ${token}"
                 },
                 body: JSON.stringify(data)
             });
@@ -91,5 +93,6 @@ const form = document.getElementById("annonceForm");
             console.error(error);
         }
     }
+    window.onload=loadKeywords();
 
     
