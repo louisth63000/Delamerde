@@ -3,7 +3,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+//import com.example.restservice.Model.User;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
@@ -20,6 +20,10 @@ public class Annonce {
 
     private String title;
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)  
+    private User user;
     private String state;
     
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -33,7 +37,9 @@ public class Annonce {
     
 
     
-    public Annonce() {}
+    public Annonce() {
+       
+    }
     public Annonce(String title, String description, String state, String zone, boolean isHandDelivery, List<String> keywords) {
         this.title = title;
         this.description = description;
@@ -41,7 +47,7 @@ public class Annonce {
         this.zone = zone;
         this.isHandDelivery = isHandDelivery;
         this.keywords=keywords;
-       
+        
     }
     public Annonce(String title, String description, String state, String zone, boolean isHandDelivery) {
         this.title = title;
@@ -52,14 +58,14 @@ public class Annonce {
         
         
     }
-    public Annonce(String title, String description, String state, LocalDateTime publicationDate, String zone, boolean isHandDelivery) {
+    public Annonce( String title, String description, String state, LocalDateTime publicationDate, String zone, boolean isHandDelivery) {
         this.title = title;
         this.description = description;
         this.state = state;
         this.zone = zone;
         this.isHandDelivery = isHandDelivery;
         this.publicationDate=publicationDate;
-        
+       
     }
 
     

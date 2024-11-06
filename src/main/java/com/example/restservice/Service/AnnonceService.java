@@ -1,6 +1,7 @@
 package com.example.restservice.Service;
 
 import com.example.restservice.Model.Annonce;
+import com.example.restservice.Model.User;
 import com.example.restservice.specifications.AnnonceSpecification;
 import com.example.restservice.Repository.AnnonceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,17 @@ public class AnnonceService {
     public AnnonceService(AnnonceRepository annonceRepository){
         this.annonceRepository=annonceRepository;
     }
-    public Annonce createAnnonce(Annonce annonce) {
+    public Annonce createAnnonce(Annonce annonce, User user) {
+        annonce.setUser(user);  
         return annonceRepository.save(annonce);
     }
+    public Annonce findAnnonceById(Long id) {
+        return annonceRepository.findById(id).orElse(null);
+    }
 
+    public void deleteAnnonce(Long id) {
+        annonceRepository.deleteById(id);
+    }
     public List<Annonce> getAllAnnonces() {
         return annonceRepository.findAll();
     }

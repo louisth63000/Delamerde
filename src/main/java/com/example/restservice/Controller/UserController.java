@@ -1,6 +1,5 @@
 package com.example.restservice.Controller;
 
-//import com.example.restservice.Model.User;
 import com.example.restservice.DTO.*;
 import com.example.restservice.config.JwtService;
 import com.example.restservice.Service.CustomUserDetailsService;
@@ -10,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-//import com.example.restservice.Repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,11 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
-/*import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;*/
 
 
 @RestController
@@ -67,12 +60,12 @@ public class UserController {
 
             // Ajouter le token en tant que cookie
             Cookie cookie = new Cookie("jwt", token);
-            cookie.setHttpOnly(true); // Empêche l'accès via JavaScript
-            cookie.setSecure(true); // Assurez-vous que votre application est en HTTPS
-            cookie.setPath("/"); // Le cookie sera accessible sur tout le domaine
-            response.addCookie(cookie); // Ajoute le cookie à la réponse
+            cookie.setHttpOnly(true); 
+            cookie.setSecure(true); 
+            cookie.setPath("/"); 
+            response.addCookie(cookie); 
 
-            return ResponseEntity.ok(new AuthResponse(token)); // Renvoyer une réponse (si nécessaire)
+            return ResponseEntity.ok(new AuthResponse(token)); 
             
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

@@ -51,7 +51,12 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true; 
     }
+    public User(){};
 
+    public User(Long id, String name){
+        this.id=id;
+        this.username=name;
+    }
    
 
     

@@ -7,10 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.restservice.specifications.AnnonceSpecification;
+
+import scala.util.Random;
+
 import com.example.restservice.Model.Annonce;
 import com.example.restservice.Repository.AnnonceRepository;
-import java.time.LocalDateTime;
+import com.example.restservice.Repository.UserRepository;
 
+import java.time.LocalDateTime;
+import com.example.restservice.Model.User;
 import org.hibernate.type.descriptor.java.LocalDateTimeJavaType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,11 +31,17 @@ import java.util.List;
 public class AnnonceServiceTest {
     @Autowired
     private AnnonceRepository annonceRepository;
+
+     @Autowired
+    private UserRepository userRepository;
     
 @Test
 void testSearchState(){
+    User user=new User();
+    user.setUsername("faaffa");
+    userRepository.save(user);
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
-
+    annonce1.setUser(user);
     annonceRepository.save(annonce1);
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF"));
 
@@ -39,7 +50,11 @@ void testSearchState(){
 }
 @Test
 void testSearchAll(){
+    User user=new User();
+    user.setUsername("faaffaaaf");
+    userRepository.save(user);
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
+    annonce1.setUser(user);
     annonceRepository.save(annonce1);
     String[] selectedZones = {"Pays de la Loire","Occitanie"};
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone(selectedZones)).and(AnnonceSpecification.hasAllKeywords(List.of("lourd")));
@@ -49,7 +64,11 @@ void testSearchAll(){
 }
 @Test
 void testSearchKeywordsWhoDontBelong(){
+    User user=new User();
+    user.setUsername("faaffaaaf");
+    userRepository.save(user);
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
+    annonce1.setUser(user);
     annonceRepository.save(annonce1);
     String[] selectedZones = {"Pays de la Loire","Occitanie"};
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasEtat("NEUF")).and(AnnonceSpecification.hasZone(selectedZones)).and(AnnonceSpecification.hasAllKeywords(List.of("lourd","leger","fort")));
@@ -59,7 +78,11 @@ void testSearchKeywordsWhoDontBelong(){
 }
 @Test
 void testSearchKeywordsAlone(){
+    User user=new User();
+    user.setUsername("faaffaaaf");
+    userRepository.save(user);
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
+    annonce1.setUser(user);
     annonceRepository.save(annonce1);
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasAllKeywords(List.of("lourd","leger")));
 
@@ -68,7 +91,11 @@ void testSearchKeywordsAlone(){
 }
 @Test
 void testSearchZoneAlone(){
+    User user=new User();
+    user.setUsername("faaffaaaf");
+    userRepository.save(user);
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF","Occitanie",true, List.of("lourd", "leger"));
+    annonce1.setUser(user);
     annonceRepository.save(annonce1);
     String[] selectedZones = {"Occitanie"};
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone(selectedZones));
@@ -78,7 +105,11 @@ void testSearchZoneAlone(){
 }
 @Test
 void testSearchZoneWhoDontBelong(){
+    User user=new User();
+    user.setUsername("faaffaaaf");
+    userRepository.save(user);
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", "Occitanie",true, List.of("lourd", "leger"));
+    annonce1.setUser(user);
     annonceRepository.save(annonce1);
     String[] selectedZones = {"Pays de la Loire","Normandie"};
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.hasZone(selectedZones)).and(AnnonceSpecification.hasEtat("NEUF"));
@@ -88,7 +119,11 @@ void testSearchZoneWhoDontBelong(){
 }
 @Test
 void testSearchLast5DaysWhoDontBelong(){
+    User user=new User();
+    user.setUsername("faaffaaaf");
+    userRepository.save(user);
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusDays(5).minusMinutes(1),"Occitanie", true);
+    annonce1.setUser(user);
     annonceRepository.save(annonce1);
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLast5Days());
 
@@ -97,7 +132,11 @@ void testSearchLast5DaysWhoDontBelong(){
 }
 @Test
 void testSearchLast5Days(){
+    User user=new User();
+    user.setUsername("faaffaaaf");
+    userRepository.save(user);
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusDays(4).minusMinutes(59),"Occitanie", true);
+    annonce1.setUser(user);
     annonceRepository.save(annonce1);
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLast5Days());
 
@@ -106,7 +145,11 @@ void testSearchLast5Days(){
 }
 @Test
 void testSearchLastHour(){
+    User user=new User();
+    user.setUsername("faaffaaaf");
+    userRepository.save(user);
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusMinutes(59),"Occitanie", true);
+    annonce1.setUser(user);
     annonceRepository.save(annonce1);
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLastHours());
 
@@ -115,7 +158,11 @@ void testSearchLastHour(){
 }
 @Test
 void testSearchLastHourWhoDontBelong(){
+    User user=new User();
+    user.setUsername("faaffaaaf");
+    userRepository.save(user);
     Annonce annonce1 = new Annonce("title3", "description3", "NEUF", LocalDateTime.now().minusMinutes(60),"Occitanie", true);
+    annonce1.setUser(user);
     annonceRepository.save(annonce1);
     Specification<Annonce> spec = Specification.where(AnnonceSpecification.publishedInLastHours());
 
