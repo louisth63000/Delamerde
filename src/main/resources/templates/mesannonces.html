@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Annonces</title>
+    <style>
+        /* Styles de base pour la mise en page */
+        .annonce {
+            border: 1px solid #ddd;
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 5px;
+        }
+        .delete-button {
+            color: red;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mes Annonces</h1>
+    <div id="annonces-container">
+        
+        <th:block th:each="annonce : ${user.annonces}">
+            <div class="annonce" th:data-annonce-id="${annonce.id}">
+                <h2 th:text="${annonce.title}">Titre de l'annonce</h2>
+                <p th:text="${annonce.description}">Description de l'annonce</p>
+                <p>État : <span th:text="${annonce.state}">État</span></p>
+                <button class="delete-button" th:onclick="'deleteAnnonce(' + ${annonce.id} + ')'" >Supprimer</button>
+            </div>
+        </th:block>
+    </div>
+    
+
+    <script>
+        function deleteAnnonce(annonceId) {
+            if (!confirm("Voulez-vous vraiment supprimer cette annonce ?")) return;
+            
+            fetch(`/annonces/${annonceId}`, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Annonce supprimée avec succès !");
+                    document.querySelector(`[data-annonce-id="${annonceId}"]`).remove();
+                } else {
+                    alert("Erreur lors de la suppression de l'annonce.");
+                }
+            })
+            .catch(error => {
+                console.error("Erreur:", error);
+                alert("Erreur lors de la suppression de l'annonce.");
+            });
+        }
+    </script>
+</body>
+</html>

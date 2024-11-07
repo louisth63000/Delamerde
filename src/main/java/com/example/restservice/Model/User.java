@@ -3,13 +3,15 @@ package com.example.restservice.Model;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 @Getter
 @Setter
+
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
@@ -25,6 +27,8 @@ public class User implements UserDetails {
 
     private String email;
     
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Annonce> annonces = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

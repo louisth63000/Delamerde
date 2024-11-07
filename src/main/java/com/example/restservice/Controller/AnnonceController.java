@@ -23,7 +23,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.List;
 import org.springframework.security.core.Authentication;
-
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 
 @Controller
 @RequestMapping("/annonces")
@@ -46,7 +47,22 @@ public class AnnonceController {
         model.addAttribute("annonces", annonces);
         return "annonces"; 
     }
-    
+    @GetMapping("/mesannonces")
+    @Transactional
+    public String afficherMesAnnonces(Model model, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";  
+        }
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
+
+        List<Annonce> annonces = annonceService.findAnnoncesByUser(user);
+        user.setAnnonces(annonces);
+        model.addAttribute("annonces", annonces);
+        model.addAttribute("user", user);
+        return "mesannonces";
+    }
+
     @PostMapping
     public String createAnnonce(@RequestBody Annonce annonce, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -58,7 +74,7 @@ public class AnnonceController {
         
         
         annonceService.createAnnonce(annonce, user);
-        
+       // user.addAnnonces();
         return "redirect:/annonces";
     }
 

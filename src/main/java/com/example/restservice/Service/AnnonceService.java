@@ -29,6 +29,10 @@ public class AnnonceService {
         return annonceRepository.findById(id).orElse(null);
     }
 
+    public List<Annonce> findAnnoncesByUser(User user) {
+        return annonceRepository.findByUser(user);
+    }
+    
     public void deleteAnnonce(Long id) {
         annonceRepository.deleteById(id);
     }
