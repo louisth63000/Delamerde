@@ -67,7 +67,35 @@
         <button type="submit">Ajouter l'annonce</button>
     </form>
     <div id="message"></div>
-    
+    <div id="searchList">
+        <h1>Historique des recherches</h1>
+        <div th:if="${searchs.empty}">
+            <p>Aucune annonce n'est disponible pour le moment.</p>
+        </div>
+        <table  th:if="${!searchs.empty}">
+            <thead>
+                <tr>
+                    <th>Zone</th>
+                    <th>Mots-clés</th>
+                    <th>État</th>
+                    <th>Date</th>
+                    <th>Lien</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="search : ${searchs}">
+                    <td th:text="${search.zone}"></td>
+                    <td th:text="${search.keywords}"></td>
+                    <td th:text="${search.state}"></td>
+                    <td th:text="${search.date}"></td>
+                    <td>
+                        <a th:href="@{/annonces/search(state=${search.state}, zone=${search.zone}, keywords=${search.keywords}, date=${search.date})}">Voir les résultats</a>
+                    </td>
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <div class="search-container">
         <h2>Rechercher des annonces</h2>
         <form id="searchForm" action="/annonces/search" method="GET">
@@ -113,8 +141,9 @@
                 <option value="5days">5 derniers jours</option>
                 <option value="30days">30 derniers jours</option>
             </select><br>
-    
+  
             <button type="submit">Rechercher</button>
+            <button type="button"  id="saveButton" >Enregistrer</button>
         </form>
     </div>
     

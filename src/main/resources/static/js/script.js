@@ -1,3 +1,9 @@
+const responseMessages = {
+    SUCCESS: "Bravo",
+    FAILURE: "Nulllll"
+};
+//A faire évoluer
+
 const form = document.getElementById("annonceForm");
 
         form.addEventListener("submit", async (e) => {
@@ -93,6 +99,28 @@ const form = document.getElementById("annonceForm");
             console.error(error);
         }
     }
+    document.getElementById('saveButton').addEventListener('click',  function() {
+        const form = document.getElementById('searchForm');
+        const formData = new FormData(form);
+
+             fetch('/annonces/search', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    alert(responseMessages.SUCCESS);
+                } else {
+                    throw new Error('Erreur lors de la requête');
+                }
+            })
+            .catch((error) => {
+                alert(responseMessages.FAILURE);
+            });
+    });
     window.onload=loadKeywords();
 
     

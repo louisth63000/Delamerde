@@ -1,8 +1,11 @@
 package com.example.restservice.Controller;
 
+import com.example.restservice.DTO.UserRegistrationDTO;
 import com.example.restservice.Model.Annonce;
 import com.example.restservice.Model.CustomUserDetails;
+import com.example.restservice.Model.Search;
 import com.example.restservice.Service.AnnonceService;
+import com.example.restservice.Service.SearchService;
 import com.example.restservice.Repository.AnnonceRepository;
 import com.example.restservice.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,18 +35,24 @@ public class AnnonceController {
     @Autowired
     private AnnonceService annonceService;
 
+
+    @Autowired
+    private SearchService searchService;
+
     @Autowired
     private AnnonceRepository annonceRepository;
     
     @GetMapping
-    public Object getAllAnnonces(HttpServletRequest request, Model model) {
+    public Object getAllAnnonces(HttpServletRequest request, Model model,Authentication authentication) {
         List<Annonce> annonces = annonceService.getAllAnnonces();
-        
+
+
         if (request.getHeader("Accept") != null && request.getHeader("Accept").contains(MediaType.APPLICATION_JSON_VALUE)) {
             return annonces; 
         }
 
         model.addAttribute("annonces", annonces);
+
         return "annonces"; 
     }
     
@@ -100,6 +109,36 @@ public class AnnonceController {
         model.addAttribute("annonces", annonces);
         return "searchAnnonce"; 
     }
+    
+    @PostMapping("/search")
+    public ResponseEntity<String> saveSearch(
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) List<String> zone,
+            @RequestParam(required = false) List<String> keywords,
+            @RequestParam(required = false) String date,
+            Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+        
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currentUser = userDetails.getUser();
+
+        // Traitez les données reçues
+        System.out.println("State: " + state);
+        System.out.println("Zone: " + zone);
+        System.out.println("Keywords: " + keywords);
+        System.out.println("Date: " + date);
+
+        Search search= new Search(currentUser, zone, keywords, state, date);
+        searchService.saveSearch(search, currentUser);
+
+        // Retournez une réponse appropriée
+        return ResponseEntity.status(200).body("Enregistrement Réussi");
+    }
+   
+
     @GetMapping("/api/keywords")
     public ResponseEntity<Set<String>> getKeywords() {
 
