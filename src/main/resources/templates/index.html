@@ -17,6 +17,39 @@
         <p>Vous pouvez créer une annonce, rechercher des objets, et plus encore !</p>
         <a href="/annonces" class="button">Voir les annonces</a>
     </div>
+    <div id="notifications">
+        <h1>Notification</h1>
+        <div th:if="${notifications.empty}">
+            <p>Aucune notification </p>
+        </div>
+        <table  th:if="${!notifications.empty}">
+            <thead>
+                <tr>
+                    <th>Vue</th>
+                    <th>Message</th>
+                    <th>Annonce</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="notification : ${notifications}" th:class="${notification.status == 0 ? 'disabled-row' : ''}">
+
+                    <td>
+                        <input type="checkbox" 
+                         th:checked="${notification.status == 1}" 
+                        th:disabled="${notification.status == 0}" 
+                        th:onchange="'changeStatus(this, ' + ${notification.id} + ')'">
+                    </td>
+                    <td th:text="${notification.message}"></td>
+                    <td>
+                        <a th:href="@{/annonces/{id}(id=${notification.annonce.id})}">Annonce</a>
+                    </td>
+
+                    
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <h1>Créer une Nouvelle Annonce</h1>
     <form id="annonceForm">
         <label for="title">Titre:</label>
@@ -67,7 +100,38 @@
         <button type="submit">Ajouter l'annonce</button>
     </form>
     <div id="message"></div>
-    
+    <div id="searchList">
+        <h1>Historique des recherches</h1>
+        <div th:if="${searchs.empty}">
+            <p>Aucune annonce n'est disponible pour le moment.</p>
+        </div>
+        <table  th:if="${!searchs.empty}">
+            <thead>
+                <tr>
+                    <th>Zone</th>
+                    <th>Mots-clés</th>
+                    <th>État</th>
+                    <th>Date</th>
+                    <th>Lien</th>
+                    <th>Supprimer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="search : ${searchs}">
+                    <td th:text="${search.zone}"></td>
+                    <td th:text="${search.keywords}"></td>
+                    <td th:text="${search.state}"></td>
+                    <td th:text="${search.date}"></td>
+                    <td>
+                        <a th:href="@{/annonces/search(state=${search.state}, zone=${search.zone}, keywords=${search.keywords}, date=${search.date})}">Voir les résultats</a>
+                    </td>
+                    <td>
+                        <Button type="button" class="delete-search" th:value="${search.id}">Supprimer</Button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <div class="search-container">
         <h2>Rechercher des annonces</h2>
         <form id="searchForm" action="/annonces/search" method="GET">
@@ -113,8 +177,9 @@
                 <option value="5days">5 derniers jours</option>
                 <option value="30days">30 derniers jours</option>
             </select><br>
-    
+  
             <button type="submit">Rechercher</button>
+            <button type="button"  id="saveButton" >Enregistrer</button>
         </form>
     </div>
     

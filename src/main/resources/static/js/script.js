@@ -1,3 +1,9 @@
+const responseMessages = {
+    SUCCESS: "Bravo",
+    FAILURE: "Nulllll"
+};
+//A faire évoluer
+
 const form = document.getElementById("annonceForm");
 
         form.addEventListener("submit", async (e) => {
@@ -93,6 +99,62 @@ const form = document.getElementById("annonceForm");
             console.error(error);
         }
     }
+    const deleteButtons = document.querySelectorAll(".delete-search");
+    console.log(deleteButtons);
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            const searchId = this.value;
+            console.log(searchId);
+            fetch(`annonces/search/${searchId}`, { method: "DELETE" })
+                .then(response => {
+                    if (response.ok) {
+                        this.closest("tr").remove();
+                        alert(responseMessages.SUCCESS);
+                    } else {
+                        console.error("Failed to delete search");
+                    }
+                })
+                .catch(error => console.error(error));
+        });
+    });
+    document.getElementById('saveButton').addEventListener('click',  function() {
+        const form = document.getElementById('searchForm');
+        const formData = new FormData(form);
+
+             fetch('/annonces/search', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    alert(responseMessages.SUCCESS);
+                } else {
+                    throw new Error('Erreur lors de la requête');
+                }
+            })
+            .catch((error) => {
+                alert(responseMessages.FAILURE);
+            });
+    });
     window.onload=loadKeywords();
+    function changeStatus(checkbox, notificationId) {
+        const status = checkbox.checked ? 1 : 0;
+        fetch(`/notifications/${notificationId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update notification status');
+            }
+        })
+        .catch(error => console.error(error));
+    }
 
     
