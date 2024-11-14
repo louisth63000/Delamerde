@@ -15,7 +15,10 @@ header {
     text-align: center;
     width: 100%;
 }
-
+.disabled-row {
+    background-color: #c4c1c1; /* Couleur de fond grise */
+    color: #4d4a4a; /* Couleur de texte grise */
+}
 .content {
     margin: 2rem auto;
     width: 80%;

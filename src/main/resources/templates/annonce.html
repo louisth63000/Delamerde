@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Annonce</title>
+</head>
+<body>
+    <h1>Annonce</h1>
+    <div th:if="${annonce == null}">
+        <p>Aucune annonce n'est disponible pour le moment.</p>
+    </div>
+    <div th:if="${annonce != null}">
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>État</th>
+                <th>Date de publication</th>
+                <th>Zone</th>
+                <th>En main propre</th>
+                <th>Mots-clés</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td th:text="${annonce.title}"></td>
+                <td th:text="${annonce.description}"></td>
+                <td th:text="${annonce.state}"></td>
+                <td th:text="${annonce.publicationDate}"></td>
+                <td th:text="${annonce.zone}"></td>
+                <td th:text="${annonce.isHandDelivery ? 'Oui' : 'Non'}"></td>
+                <td>
+                    <ul>
+                        <li th:each="keyword : ${annonce.keywords}" th:text="${keyword}"></li>
+                    </ul>
+                </td> 
+            </tr>
+        </tbody>
+    </table>
+    </div>
+</body>
+</html>

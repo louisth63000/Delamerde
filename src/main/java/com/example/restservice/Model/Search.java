@@ -15,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "search")
 public class Search {
 
     @Id
@@ -32,6 +34,7 @@ public class Search {
     @JoinColumn(name = "user_id", nullable = false)  
     private User user;
 
+    
     @ElementCollection
     private List<String> zone =new ArrayList<>();
 

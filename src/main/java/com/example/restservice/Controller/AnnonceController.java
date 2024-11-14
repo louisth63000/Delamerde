@@ -3,8 +3,10 @@ package com.example.restservice.Controller;
 import com.example.restservice.DTO.UserRegistrationDTO;
 import com.example.restservice.Model.Annonce;
 import com.example.restservice.Model.CustomUserDetails;
+import com.example.restservice.Model.Notification;
 import com.example.restservice.Model.Search;
 import com.example.restservice.Service.AnnonceService;
+import com.example.restservice.Service.NotificationService;
 import com.example.restservice.Service.SearchService;
 import com.example.restservice.Repository.AnnonceRepository;
 import com.example.restservice.Model.User;
@@ -35,6 +37,8 @@ public class AnnonceController {
     @Autowired
     private AnnonceService annonceService;
 
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private SearchService searchService;
@@ -53,6 +57,7 @@ public class AnnonceController {
 
         model.addAttribute("annonces", annonces);
 
+
         return "annonces"; 
     }
     
@@ -65,12 +70,64 @@ public class AnnonceController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User user = userDetails.getUser();
         
-        
+        List<Search> searchList =searchService.getSearchesByAnnonce(annonce);
+        List<User> users = searchList.stream()
+        .map(search -> search.getUser())
+        .distinct()
+        .collect(Collectors.toList());
+
+    
+        System.out.println("Oui");
+        System.out.println(users);
+
         annonceService.createAnnonce(annonce, user);
         
+        users.forEach(u -> {
+            Notification notif=new Notification();
+            notif.setStatus(1);
+            notif.setMessage("Vous avez un produit qui correspond à vos recherche");
+            if (u.getId() != user.getId())
+            {
+                notificationService.createNotification(notif, u, annonce);
+            }
+        });
+
         return "redirect:/annonces";
     }
+    @DeleteMapping("search/{id}")
+    public ResponseEntity<String> deleteSearch(@PathVariable Long id, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Non");
+        }
 
+        // Récupérer l'utilisateur connecté
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currentUser = userDetails.getUser();
+
+        Search search=searchService.getSearch(id);
+        if (search == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Non");
+        // Vérifier si l'utilisateur connecté est bien le créateur de l'annonce
+        if (!search.getUser().getId().equals(currentUser.getId())) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this annonce");
+        }
+        searchService.deleteSearch(id);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Supprimer");
+    }
+    
+    @GetMapping("/{id}")
+    public Object getAnnonces(@PathVariable Long id, Model model,Authentication authentication) {
+        Annonce annonce = annonceService.findAnnonceById(id);
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";  
+        }
+
+        model.addAttribute("annonce", annonce);
+
+
+        return "annonce"; 
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAnnonce(@PathVariable Long id, Authentication authentication) {
         // Vérifier que l'utilisateur est authentifié
