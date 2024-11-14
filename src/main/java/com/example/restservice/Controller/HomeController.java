@@ -42,6 +42,7 @@ public class HomeController {
 
         model.addAttribute("notifications",notifs);
         model.addAttribute("searchs",searchs);
+        model.addAttribute("user",currentUser);
         return "index"; 
     }
     

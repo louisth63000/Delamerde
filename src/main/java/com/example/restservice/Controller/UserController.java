@@ -1,10 +1,13 @@
 package com.example.restservice.Controller;
 
 import com.example.restservice.DTO.*;
+import com.example.restservice.Model.CustomUserDetails;
+import com.example.restservice.Model.User;
 import com.example.restservice.config.JwtService;
 import com.example.restservice.Service.CustomUserDetailsService;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
+
 
 
 @RestController
@@ -74,6 +78,19 @@ public class UserController {
     }
 
     
+    @PutMapping("hasNotification")
+    public ResponseEntity<?> putNotification(HttpServletRequest request, Authentication authentication) {
+        
+        
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currentUser = userDetails.getUser();
+        currentUser.setHasNotification(!currentUser.isHasNotification());
+        
+        userService.changehasNotification(currentUser);
+
+        return ResponseEntity.ok("Super");
+    }
+
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {

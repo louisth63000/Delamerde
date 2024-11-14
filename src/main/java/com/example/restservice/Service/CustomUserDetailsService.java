@@ -44,4 +44,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         userRepository.save(user);
     }
+    public void changehasNotification(User user){
+
+        userRepository.save(user);
+    }
 }

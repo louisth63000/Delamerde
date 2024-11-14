@@ -156,5 +156,18 @@ const form = document.getElementById("annonceForm");
         })
         .catch(error => console.error(error));
     }
-
+    function changehasNotification() {        
+        fetch(`/api/hasNotification`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update notification status');
+            }
+        })
+        .catch(error => console.error(error));
+    }
     

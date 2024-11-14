@@ -102,7 +102,7 @@ public class AnnonceController {
             Notification notif=new Notification();
             notif.setStatus(1);
             notif.setMessage("Vous avez un produit qui correspond à vos recherche");
-            if (u.getId() != user.getId())
+            if (u.getId() != user.getId() && u.isHasNotification())
             {
                 notificationService.createNotification(notif, u, annonce);
             }

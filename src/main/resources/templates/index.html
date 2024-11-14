@@ -19,6 +19,12 @@
     </div>
     <div id="notifications">
         <h1>Notification</h1>
+        </div>
+        <input type="checkbox" th:checked="${user.hasNotification}" th:onchange="'changehasNotification()'">
+            <p >Activer les notifications</p>
+            <p> Désactiver les notifications</p>
+           
+        </div>
         <div th:if="${notifications.empty}">
             <p>Aucune notification </p>
         </div>
