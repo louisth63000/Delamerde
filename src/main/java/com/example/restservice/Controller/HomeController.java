@@ -12,6 +12,7 @@ import com.example.restservice.Model.CustomUserDetails;
 import com.example.restservice.Model.Notification;
 import com.example.restservice.Model.Search;
 import com.example.restservice.Model.User;
+import com.example.restservice.Service.MessageService;
 import com.example.restservice.Service.NotificationService;
 import com.example.restservice.Service.SearchService;
 
@@ -25,7 +26,10 @@ public class HomeController {
     private SearchService searchService;
 
     @Autowired
-    private NotificationService notificationService; 
+    private NotificationService notificationService;
+    
+    @Autowired
+    private  MessageService messageservice; 
 
     @GetMapping("/")
     public String index(HttpServletRequest request, Model model,Authentication authentication) {
@@ -39,7 +43,9 @@ public class HomeController {
         
         List<Search> searchs = searchService.getSearchesByUser(currentUser);
         List<Notification> notifs = notificationService.getNotificationsByUser(currentUser);
+        List<User> users = messageservice.findUsersCommunicatedWith(currentUser);
 
+        model.addAttribute("users",users);
         model.addAttribute("notifications",notifs);
         model.addAttribute("searchs",searchs);
         model.addAttribute("user",currentUser);

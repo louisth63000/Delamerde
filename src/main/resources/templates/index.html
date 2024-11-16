@@ -17,6 +17,31 @@
         <p>Vous pouvez créer une annonce, rechercher des objets, et plus encore !</p>
         <a href="/annonces" class="button">Voir les annonces</a>
     </div>
+    <div >
+        <h1>Messagerie</h1>
+        <div th:if="${users.empty}">
+            <p>Aucun contact </p>
+        </div>
+        <table  th:if="${!users.empty}">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Messagerie</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.username}"></td>
+                    <td>
+                        <a th:href="@{/conversations/{id}(id=${user.id})}">Messagerie</a>
+                    </td>
+
+                    
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <div id="notifications">
         <h1>Notification</h1>
         <div class="checkgroup">

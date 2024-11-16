@@ -25,4 +25,11 @@ public class MessageSpecification {
             return cb.or(fromUser1ToUser2, fromUser2ToUser1);
         };
     }
+    public static Specification<Message> hasCommunicatedWith(User user) {
+        return (root, query, cb) -> {
+            Predicate fromUser = cb.equal(root.get("from"), user);
+            Predicate toUser = cb.equal(root.get("to"), user);
+            return cb.or(fromUser, toUser);
+        };
+    }
 }

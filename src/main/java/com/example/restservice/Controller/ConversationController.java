@@ -44,7 +44,7 @@ public class ConversationController {
 
         User user2 = userservice.getUserByid( id);
 
-        if (user2 == null)
+        if (user2 == null || user2.getId() == user.getId())
         {
             return "redirect:/";  
         }
@@ -77,7 +77,7 @@ public class ConversationController {
 
         User user2 = userservice.getUserByid( conversationId);
 
-        if (user2 == null)
+        if (user2 == null || user2.getId() == user.getId())
         {
             return "redirect:/";  
         }
