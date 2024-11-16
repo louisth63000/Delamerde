@@ -19,6 +19,7 @@
                 <th>Zone</th>
                 <th>En main propre</th>
                 <th>Mots-clés</th>
+                <th>User id</th>
             </tr>
         </thead>
         <tbody>
@@ -33,7 +34,11 @@
                     <ul>
                         <li th:each="keyword : ${annonce.keywords}" th:text="${keyword}"></li>
                     </ul>
-                </td> 
+                </td>
+                <td>
+                    <a th:href="@{/conversations/{id}(id=${annonce.user.id})}" >Contacter</a>
+                </td>
+               
             </tr>
         </tbody>
     </table>

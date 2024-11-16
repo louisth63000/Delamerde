@@ -48,4 +48,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         userRepository.save(user);
     }
+    public User getUserByid(long id)
+    {
+        return userRepository.findById(id).orElse(null);
+    }
 }
