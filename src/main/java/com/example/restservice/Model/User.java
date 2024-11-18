@@ -26,6 +26,11 @@ public class User implements UserDetails {
     private String password;
 
     private String email;
+
+    // Relation un-à-un avec Panier
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "panier_id", referencedColumnName = "id")
+    private Card card;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Annonce> annonces = new ArrayList<>();

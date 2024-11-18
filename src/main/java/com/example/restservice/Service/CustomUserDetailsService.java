@@ -1,13 +1,12 @@
 package com.example.restservice.Service;
 
+import com.example.restservice.Model.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.example.restservice.Repository.UserRepository;
-
-import scala.util.Random;
 
 import com.example.restservice.DTO.UserRegistrationDTO;
 import com.example.restservice.Model.CustomUserDetails;
@@ -41,6 +40,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         user.setUsername(userDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword())); 
         user.setEmail(userDTO.getEmail());
+
+        Card card = new Card();
+        card.setUser(user);  // Lier le panier à l'utilisateur
+        user.setCard(card); // Lier l'utilisateur au panier
+
 
         userRepository.save(user);
     }
