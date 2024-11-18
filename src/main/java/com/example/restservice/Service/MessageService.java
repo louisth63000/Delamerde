@@ -1,6 +1,8 @@
 package com.example.restservice.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -39,25 +41,12 @@ public class MessageService {
         return messageRepository.findAll(spec);
     }
   public List<User> findUsersCommunicatedWith(User user) {
-        Specification<Message> spec = MessageSpecification.hasCommunicatedWith(user);
-        List<Message> messages = messageRepository.findAll(spec);
-
+        PageRequest pageRequest = PageRequest.of(0, 10,Sort.by(Sort.Direction.DESC,"id"));
+        List<Message> messages = messageRepository.findByFromOrTo(user, user,pageRequest).getContent();
         return messages.stream()
-        .flatMap(message -> Stream.of(message.getFrom(), message.getTo()))
-        .filter(u -> !u.equals(user))
-        .distinct()
-        .sorted((u1, u2) -> {
-            Message latestMessage1 = messages.stream()
-                    .filter(m -> m.getFrom().equals(u1) || m.getTo().equals(u1))
-                    .max(Comparator.comparing(Message::getId))
-                    .orElse(null);
-            Message latestMessage2 = messages.stream()
-                    .filter(m -> m.getFrom().equals(u2) || m.getTo().equals(u2))
-                    .max(Comparator.comparing(Message::getId))
-                    .orElse(null);
-            return latestMessage2.getId().compareTo(latestMessage1.getId());
-        })
-        .limit(10)
-        .collect(Collectors.toList());
+                .flatMap(message -> List.of(message.getFrom(), message.getTo()).stream())
+                .filter(u -> !u.equals(user))
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
