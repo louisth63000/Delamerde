@@ -18,7 +18,7 @@ const form = document.getElementById("annonceForm");
                 keywords: keywords
             };
 
-            const response = await fetch("/annonces", {
+            const response = await fetch("/api/annonces", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -75,7 +75,7 @@ const form = document.getElementById("annonceForm");
     });
     async function loadKeywords() {
     try {
-        const response = await fetch('/annonces/api/keywords');
+        const response = await fetch('/api/annonces/keywords');
         
         if (!response.ok) throw new Error('Erreur lors du chargement des mots-clés');
 

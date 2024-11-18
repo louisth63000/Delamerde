@@ -33,13 +33,23 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/register", "/api/login","/login","/css/**","/","/annonces").permitAll()
+                .requestMatchers("/api/register", "/api/login","/css/**","/","/js/**","/annonces","/api/annonces/keywords").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Important pour le JWT
             
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); 
-
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .formLogin(login -> login
+                .loginPage("/login")
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout") // Redirige après déconnexion
+                .deleteCookies("JSESSIONID","jwt")   
+                   
+                .invalidateHttpSession(true)      // Invalide la session
+            );
         return http.build();
     }
 

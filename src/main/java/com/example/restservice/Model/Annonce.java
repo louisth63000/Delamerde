@@ -6,6 +6,8 @@ import java.util.List;
 //import com.example.restservice.Model.User;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +25,7 @@ public class Annonce {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)  
+    @JsonBackReference
     private User user;
     
     private String state;

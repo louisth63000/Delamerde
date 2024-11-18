@@ -169,6 +169,7 @@ void testSearchLastHourWhoDontBelong(){
     List<Annonce> results = annonceRepository.findAll(spec);
     assertThat(results.isEmpty()).isTrue();
 }
+
 }
 
 
