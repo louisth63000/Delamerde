@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         if(!jwt.isEmpty() && jwtService.isValidJwt(jwt)){
                         //    System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+jwt);
                             username = jwtService.extractUsername(jwt);
-                            System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"+username.isEmpty()+username+"bbbb");
+                       //     System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"+username.isEmpty()+username+"bbbb");
                         }
                         break;
                     }
