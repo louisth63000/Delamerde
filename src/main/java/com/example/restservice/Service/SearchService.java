@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -36,10 +39,10 @@ public class SearchService  {
         } 
             return null;
     }
-    public List<Search> getSearchesByUser(User user) {
-        
+   public Page<Search> getSearchesByUser(User user, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         Specification<Search> spec = SearchSpecification.getAllSearchByUser(user);
-        return searchRepository.findAll(spec);
+        return searchRepository.findAll(spec, pageable);
     }
     public List<Search> getSearchesByAnnonce(Annonce annonce) {
         
