@@ -7,6 +7,7 @@ import com.example.restservice.config.JwtService;
 import com.example.restservice.Service.CustomUserDetailsService;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api")
@@ -86,7 +88,20 @@ public class UserController {
         }
     }
 
-   
+    
+    @PutMapping("hasNotification")
+    public ResponseEntity<?> putNotification(HttpServletRequest request, Authentication authentication) {
+        
+        
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currentUser = userDetails.getUser();
+        currentUser.setHasNotification(!currentUser.isHasNotification());
+        
+        userService.changehasNotification(currentUser);
+
+        return ResponseEntity.ok("Super");
+    }
+
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response, @CookieValue(value = "jwt", required = false) String jwtToken) {

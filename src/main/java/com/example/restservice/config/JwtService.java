@@ -70,6 +70,7 @@ public class JwtService {
                 .setSigningKey(getSignKey())
                 .build()
                 .parseClaimsJws(token);
+            
             return true;
         } catch (ExpiredJwtException e) {
             System.out.println("JWT est expiré : " + e.getMessage());

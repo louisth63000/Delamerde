@@ -33,7 +33,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/register", "/api/login","/css/**","/","/js/**","/annonces","/api/annonces/keywords").permitAll()
+                .requestMatchers("/api/register", "/api/login","/css/**","/","/js/**","/annonces","/annonces/keywords","/login").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Important pour le JWT

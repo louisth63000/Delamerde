@@ -29,6 +29,16 @@ public class User implements UserDetails {
     private String password;
 
     private String email;
+
+    private boolean hasNotification;
+    
+
+    @PrePersist
+    public void prePersist() {
+        if (hasNotification == false) {
+            hasNotification = true;
+        }
+    }
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

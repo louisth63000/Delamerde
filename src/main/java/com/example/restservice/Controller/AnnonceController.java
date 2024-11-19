@@ -1,8 +1,17 @@
 package com.example.restservice.Controller;
 
+import com.example.restservice.DTO.UserRegistrationDTO;
 import com.example.restservice.Model.Annonce;
 import com.example.restservice.Model.CustomUserDetails;
+import com.example.restservice.Model.Notification;
+import com.example.restservice.Model.Search;
+import org.springframework.ui.Model;
 import com.example.restservice.Service.AnnonceService;
+import com.example.restservice.Service.NotificationService;
+import com.example.restservice.Service.SearchService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.example.restservice.Repository.AnnonceRepository;
 import com.example.restservice.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,37 +28,84 @@ import org.springframework.http.ResponseEntity;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.List;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RestController
-@RequestMapping("/api/annonces")
+@RequestMapping("/annonces")
 public class AnnonceController {
 
     @Autowired
     private AnnonceService annonceService;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private SearchService searchService;
+
+    @Autowired
     private AnnonceRepository annonceRepository;
 
-    // Récupérer toutes les annonces
+
+     @GetMapping
+    public String afficherToutesLesAnnonces(Model model) {
+        List<Annonce> annonces = annonceService.getAllAnnonces();
+        model.addAttribute("annonces", annonces);
+        return "annonces"; // Vue Thymeleaf
+    }
+
+    
+    @GetMapping("/{id}")
+    public Object getAnnonces(@PathVariable Long id, Model model,Authentication authentication) {
+        Annonce annonce = annonceService.findAnnonceById(id);
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";  
+        }
+
+        model.addAttribute("annonce", annonce);
+
+
+        return "annonce"; 
+    }
+
+    
+    
+
+   /* // Récupérer toutes les annonces
     @GetMapping
     public ResponseEntity<List<Annonce>> getAllAnnonces() {
         List<Annonce> annonces = annonceService.getAllAnnonces();
         return ResponseEntity.ok(annonces);
     }
-
+    */
     // Récupérer les annonces de l'utilisateur connecté
-    @GetMapping("/me")
-    public ResponseEntity<List<Annonce>> getMyAnnonces(Authentication authentication) {
+    @GetMapping("/mesannonces")
+    @Transactional
+    public ResponseEntity<Object> getMyAnnonces(HttpServletRequest request,Model model,Authentication authentication) {
+        String acceptHeader = request.getHeader("Accept");
         if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); 
         }
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        User user = userDetails.getUser();
-        List<Annonce> annonces = annonceService.findAnnoncesByUser(user);
-        return ResponseEntity.ok(annonces);
+        if (acceptHeader != null && acceptHeader.contains(MediaType.APPLICATION_JSON_VALUE)) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            User user = userDetails.getUser();
+            List<Annonce> annonces = annonceService.findAnnoncesByUser(user);
+            return ResponseEntity.ok(annonces);
+        }
+        else{
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            User user = userDetails.getUser();
+    
+            List<Annonce> annonces = annonceService.findAnnoncesByUser(user);
+            user.setAnnonces(annonces);
+            model.addAttribute("annonces", annonces);
+            model.addAttribute("user", user);
+            return ResponseEntity.ok().body("annonces");
+        }
     }
 
     // Créer une annonce
@@ -61,12 +117,53 @@ public class AnnonceController {
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User user = userDetails.getUser();
+        
+        List<Search> searchList =searchService.getSearchesByAnnonce(annonce);
+        List<User> users = searchList.stream()
+        .map(search -> search.getUser())
+        .distinct()
+        .collect(Collectors.toList());
 
-        Annonce createdAnnonce = annonceService.createAnnonce(annonce, user);
+    
+        System.out.println("Oui");
+        System.out.println(users);
+
+        Annonce createdAnnonce= annonceService.createAnnonce(annonce, user);
+        
+        users.forEach(u -> {
+            Notification notif=new Notification();
+            notif.setStatus(1);
+            notif.setMessage("Vous avez un produit qui correspond à vos recherche");
+            if (u.getId() != user.getId() && u.isHasNotification())
+            {
+                notificationService.createNotification(notif, u, annonce);
+            }
+        });
+
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAnnonce);
     }
+    @DeleteMapping("search/{id}")
+    public ResponseEntity<String> deleteSearch(@PathVariable Long id, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Non");
+        }
 
-    // Supprimer une annonce
+        // Récupérer l'utilisateur connecté
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currentUser = userDetails.getUser();
+
+        Search search=searchService.getSearch(id);
+        if (search == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Non");
+        // Vérifier si l'utilisateur connecté est bien le créateur de l'annonce
+        if (!search.getUser().getId().equals(currentUser.getId())) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this annonce");
+        }
+        searchService.deleteSearch(id);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Supprimer");
+    }
+    
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAnnonce(@PathVariable Long id, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -88,18 +185,68 @@ public class AnnonceController {
         annonceService.deleteAnnonce(id);
         return ResponseEntity.ok("Annonce deleted successfully");
     }
+    
+    
+    @PostMapping("/search")
+    public ResponseEntity<String> saveSearch(
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) List<String> zone,
+            @RequestParam(required = false) List<String> keywords,
+            @RequestParam(required = false) String date,
+            Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+        
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currentUser = userDetails.getUser();
+
+        // Traitez les données reçues
+        System.out.println("State: " + state);
+        System.out.println("Zone: " + zone);
+        System.out.println("Keywords: " + keywords);
+        System.out.println("Date: " + date);
+
+        Search search= new Search(currentUser, zone, keywords, state, date);
+        searchService.saveSearch(search, currentUser);
+
+        // Retournez une réponse appropriée
+        return ResponseEntity.status(200).body("Enregistrement Réussi");
+    }
+   
+
+    
 
     // Recherche des annonces
     @GetMapping("/search")
-    public ResponseEntity<List<Annonce>> searchAnnonces(
+    public ResponseEntity<Object> searchAnnonces(
             @RequestParam(required = false) String[] zone,
             @RequestParam(required = false) String state,
             @RequestParam(required = false) List<String> keywords,
-            @RequestParam(required = false) String date) {
+            @RequestParam(required = false) String date,
+            Model model,
+            HttpServletRequest request) {
         List<Annonce> annonces = annonceService.searchAnnonces(zone, state, keywords, date);
-        return ResponseEntity.ok(annonces);
+        String acceptHeader = request.getHeader("Accept");
+        if (acceptHeader != null && acceptHeader.contains(MediaType.APPLICATION_JSON_VALUE)) {
+            return ResponseEntity.ok(annonces);
+        }
+        model.addAttribute("annonces", annonces);
+        return  ResponseEntity.ok().body("searchAnnonces");
+        
     }
-
+    /*@GetMapping("/search")
+    public String searchAnnonces(
+        @RequestParam(required = false) String[] zone,
+        @RequestParam(required = false) String state,
+        @RequestParam(required = false) List<String> keywords,
+        @RequestParam(required = false) String date,
+        Model model) {
+        List<Annonce> annonces = annonceService.searchAnnonces(zone, state, keywords,date);
+        model.addAttribute("annonces", annonces);
+        return "searchAnnonce"; 
+    } */
     // Récupérer les mots-clés
     @GetMapping("/keywords")
     public ResponseEntity<Set<String>> getKeywords() {
