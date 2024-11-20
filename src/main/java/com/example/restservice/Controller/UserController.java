@@ -66,14 +66,14 @@ public class UserController {
     }
 
 
-    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/login") //(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> login(@RequestBody UserLoginDTO userDTO, HttpServletResponse response) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword())
             );
             String token = jwtService.generateToken(authentication.getName());
-
+           // System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             // Ajouter le token en tant que cookie
             Cookie cookie = new Cookie("jwt", token);
             cookie.setHttpOnly(true); 

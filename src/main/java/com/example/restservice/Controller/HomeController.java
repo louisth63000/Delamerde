@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.http.MediaType;
 import com.example.restservice.Model.CustomUserDetails;
 import com.example.restservice.Model.Notification;
 import com.example.restservice.Model.Search;
@@ -58,7 +58,7 @@ public class HomeController {
         return "index"; 
     }
     
-    @GetMapping("/login")
+    @GetMapping(value = "/login")
     public String showLoginPage() {
         return "login"; 
     }

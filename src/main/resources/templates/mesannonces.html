@@ -39,7 +39,7 @@
         function deleteAnnonce(annonceId) {
             if (!confirm("Voulez-vous vraiment supprimer cette annonce ?")) return;
             
-            fetch(`/api/annonces/${annonceId}`, {
+            fetch(`/annonces/${annonceId}`, {
                 method: 'DELETE',
             })
             .then(response => {
