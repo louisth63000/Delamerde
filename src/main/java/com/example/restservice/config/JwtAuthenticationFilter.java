@@ -48,7 +48,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 for (Cookie cookie : cookies) {
                     if ("jwt".equals(cookie.getName())) {
                         jwt = cookie.getValue();
-                        username = jwtService.extractUsername(jwt);
+                        if(!jwt.isEmpty() && jwtService.isValidJwt(jwt)){
+                        //    System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+jwt);
+                            username = jwtService.extractUsername(jwt);
+                       //     System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"+username.isEmpty()+username+"bbbb");
+                        }
                         break;
                     }
                 }
@@ -56,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null && !username.equals("aa")) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (jwtService.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

@@ -38,6 +38,7 @@ public class HomeController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/login";
         }
+            
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User currentUser = userDetails.getUser();
@@ -46,11 +47,13 @@ public class HomeController {
         List<Notification> notifs = notificationService.getNotificationsByUser(currentUser);
         List<User> users = messageService.findUsersCommunicatedWith(currentUser);
 
+
         model.addAttribute("users", users);
         model.addAttribute("notifications", notifs);
         model.addAttribute("searchs", searchPage.getContent());
         model.addAttribute("user", currentUser);
     
+
         return "index"; 
     }
     

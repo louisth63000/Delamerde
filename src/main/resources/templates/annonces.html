@@ -19,6 +19,7 @@
                 <th>Zone</th>
                 <th>En main propre</th>
                 <th>Mots-clés</th>
+                <th>Panier</th>
                 <th>User id</th>
             </tr>
         </thead>
@@ -34,6 +35,11 @@
                     <ul>
                         <li th:each="keyword : ${annonce.keywords}" th:text="${keyword}"></li>
                     </ul>
+                </td>
+                <td>
+                    <form th:action="@{/card/annonce/{annonceId}(annonceId=${annonce.id})}" method="post">
+                        <button type="submit">Ajouter au Panier</button>
+                    </form>
                 </td>
                 <td>
                     <a th:href="@{/conversations/{id}(id=${annonce.user.id})}" >Contacter</a>
