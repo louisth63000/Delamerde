@@ -22,19 +22,9 @@ public class NotificationSpecification {
     
             // Add the subquery to the main query to limit the number of results to 10
             query.where(root.get("id").in(subquery));
-            query.groupBy(root.get("id"));
             query.orderBy(criteriaBuilder.desc(root.get("id")));
     
-            // Use a subquery to limit the number of results to 10 and sort them in descending order
-            Subquery<Long> countSubquery = query.subquery(Long.class);
-            Root<Notification> countSubRoot = countSubquery.from(Notification.class);
-            countSubquery.select(criteriaBuilder.count(countSubRoot))
-                    .where(criteriaBuilder.equal(countSubRoot.get("user"), user));
-    
-            return criteriaBuilder.and(
-                    criteriaBuilder.equal(root.get("user"), user),
-                    criteriaBuilder.le(countSubquery, 10)
-            );
+            return criteriaBuilder.equal(root.get("user"), user);
         };
     }
     

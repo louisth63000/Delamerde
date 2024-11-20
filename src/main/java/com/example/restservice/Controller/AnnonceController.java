@@ -34,7 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @RestController
-@RequestMapping("/api/annonces")
+@RequestMapping("/annonces")
+
 public class AnnonceController {
 
     @Autowired
@@ -48,7 +49,6 @@ public class AnnonceController {
 
     @Autowired
     private AnnonceRepository annonceRepository;
-
     
     @GetMapping("/{id}")
     public Object getAnnonces(@PathVariable Long id, Model model,Authentication authentication) {
@@ -74,6 +74,7 @@ public class AnnonceController {
         return ResponseEntity.ok(annonces);
     }
     
+
     // Récupérer les annonces de l'utilisateur connecté
     @GetMapping("/mesannonces")
     @Transactional
@@ -88,6 +89,7 @@ public class AnnonceController {
         List<Annonce> annonces = annonceService.findAnnoncesByUser(user);
         return ResponseEntity.ok(annonces);
         
+
     }
 
     // Créer une annonce
@@ -210,12 +212,14 @@ public class AnnonceController {
             Model model,
             HttpServletRequest request) {
         List<Annonce> annonces = annonceService.searchAnnonces(zone, state, keywords, date);
+
         
         return ResponseEntity.ok(annonces);
         
         
     }
     
+
     // Récupérer les mots-clés
     @GetMapping("/keywords")
     public ResponseEntity<Set<String>> getKeywords() {

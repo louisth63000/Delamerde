@@ -121,3 +121,4 @@ public class AnnonceViewController {
             return "redirect:/annonces";
         }
 }
+

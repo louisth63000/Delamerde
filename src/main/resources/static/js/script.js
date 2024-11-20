@@ -88,7 +88,9 @@ function updateDate(){
 }
 async function loadKeywords() {
     try {
-        const response = await fetch('/api/annonces/keywords');
+
+        const response = await fetch('/annonces/keywords');
+
 
         if (!response.ok) throw new Error('Erreur lors du chargement des mots-clés');
 
@@ -112,7 +114,7 @@ deleteButtons.forEach(button => {
     button.addEventListener("click", function () {
         const searchId = this.value;
         console.log(searchId);
-        fetch(`/api/annonces/search/${searchId}`, { method: "DELETE" })
+        fetch(`/annonces/search/${searchId}`, { method: "DELETE" })
             .then(response => {
                 if (response.ok) {
                     this.closest("tr").remove();
@@ -128,7 +130,7 @@ document.getElementById('saveButton').addEventListener('click', function () {
     const form = document.getElementById('searchForm');
     const formData = new FormData(form);
 
-    fetch('/api/annonces/search', {
+    fetch('/annonces/search', {
         method: 'POST',
         body: formData,
         headers: {
@@ -162,17 +164,6 @@ function handleFetch(url, options, successMessage, errorMessage) {
             console.error(error);
         });
 }
-
-document.querySelector('form').addEventListener('submit', function (event) {
-    event.preventDefault();
-    handleFetch('/api/submit', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    }, responseMessages.SUCCESS, 'Erreur lors de la requête');
-});
 
 function changeStatus(checkbox, notificationId) {
     const status = checkbox.checked ? 1 : 0;
