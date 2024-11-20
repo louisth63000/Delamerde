@@ -37,6 +37,7 @@ form.addEventListener("submit", async (e) => {
         form.reset();
         resetKeywords();
         loadKeywords();
+        updateDate();
         alert("Annonce créée avec succès !");
 
     } else {
@@ -79,9 +80,17 @@ window.addEventListener("load", () => {
     const formattedDate = now.toISOString().slice(0, 16);
     publicationDateInput.value = formattedDate;
 });
+function updateDate(){
+    const publicationDateInput = document.getElementById("publicationDate");
+    const now = new Date();
+    const formattedDate = now.toISOString().slice(0, 16);
+    publicationDateInput.value = formattedDate;
+}
 async function loadKeywords() {
     try {
+
         const response = await fetch('/annonces/keywords');
+
 
         if (!response.ok) throw new Error('Erreur lors du chargement des mots-clés');
 
@@ -105,7 +114,7 @@ deleteButtons.forEach(button => {
     button.addEventListener("click", function () {
         const searchId = this.value;
         console.log(searchId);
-        fetch(`annonces/search/${searchId}`, { method: "DELETE" })
+        fetch(`/annonces/search/${searchId}`, { method: "DELETE" })
             .then(response => {
                 if (response.ok) {
                     this.closest("tr").remove();

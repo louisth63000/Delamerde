@@ -54,6 +54,7 @@ public class HomeController {
         model.addAttribute("user", currentUser);
     
 
+
         return "index"; 
     }
     
