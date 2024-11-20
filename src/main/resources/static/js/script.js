@@ -81,7 +81,7 @@ window.addEventListener("load", () => {
 });
 async function loadKeywords() {
     try {
-        const response = await fetch('/annonces/api/keywords');
+        const response = await fetch('/annonces/keywords');
 
         if (!response.ok) throw new Error('Erreur lors du chargement des mots-clés');
 

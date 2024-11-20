@@ -9,7 +9,7 @@ import com.example.restservice.Service.CustomUserDetailsService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -18,9 +18,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
-
+import org.springframework.security.core.userdetails.UserDetailsService;
+import java.util.Map;
 
 
 @RestController
@@ -37,6 +39,9 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     public UserController(CustomUserDetailsService userService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder; 
@@ -46,10 +51,17 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDTO userDTO) {
         try {
-            userService.registerUser(userDTO, passwordEncoder); 
-            return ResponseEntity.ok("User registered successfully");
+            userService.registerUser(userDTO, passwordEncoder);
+            
+            return ResponseEntity.ok(Collections.singletonMap("message", "User registered successfully"));
+        } catch (RuntimeException e) {
+            
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                                .body(Collections.singletonMap("error", "Username already exists"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User registration failed: " + e.getMessage());
+            
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body(Collections.singletonMap("error", "User registration failed: " + e.getMessage()));
         }
     }
 
@@ -65,7 +77,6 @@ public class UserController {
             // Ajouter le token en tant que cookie
             Cookie cookie = new Cookie("jwt", token);
             cookie.setHttpOnly(true); 
-            cookie.setSecure(true); 
             cookie.setPath("/"); 
             response.addCookie(cookie); 
 
@@ -93,7 +104,15 @@ public class UserController {
 
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
-        return ResponseEntity.ok("Logout successful");
+    public ResponseEntity<?> logout(HttpServletResponse response, @CookieValue(value = "jwt", required = false) String jwtToken) {
+        if (jwtToken != null) {
+            // Supprimer le cookie
+            jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("jwt", null);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(0); 
+            response.addCookie(cookie);
+        }
+        return ResponseEntity.ok("Déconnexion réussie");
     }
 }

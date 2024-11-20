@@ -37,6 +37,7 @@ public class HomeController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/login";
         }
+            
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User currentUser = userDetails.getUser();
@@ -48,7 +49,7 @@ public class HomeController {
         model.addAttribute("users",users);
         model.addAttribute("notifications",notifs);
         model.addAttribute("searchs",searchs);
-        model.addAttribute("user",currentUser);
+        model.addAttribute("user",currentUser); 
         return "index"; 
     }
     

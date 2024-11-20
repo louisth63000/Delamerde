@@ -35,6 +35,8 @@
         </form>
     </div>
     
+    <p th:if="${param.logout}" style="color: green;">Vous vous êtes déconnecté avec succès.</p>
+
     <script>
         
         document.getElementById('loginForm').addEventListener('submit', function(event) {
@@ -90,7 +92,7 @@
 
                 if (response.ok) {
                     alert("Registration successful!");
-                    document.getElementById("registerForm").reset();
+                   // document.getElementById("registerForm").reset();
                 } else {
                     const errorData = await response.json();
                     alert("Registration failed: " + errorData.message);

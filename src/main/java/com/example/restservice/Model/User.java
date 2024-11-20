@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.Collection;
 
 @Getter
@@ -42,6 +45,7 @@ public class User implements UserDetails {
     }
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Annonce> annonces = new ArrayList<>();
 
     @Override
