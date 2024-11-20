@@ -1,8 +1,13 @@
 package com.example.restservice.Controller;
 
+import com.example.restservice.DTO.UserRegistrationDTO;
 import com.example.restservice.Model.Annonce;
 import com.example.restservice.Model.CustomUserDetails;
+import com.example.restservice.Model.Notification;
+import com.example.restservice.Model.Search;
 import com.example.restservice.Service.AnnonceService;
+import com.example.restservice.Service.NotificationService;
+import com.example.restservice.Service.SearchService;
 import com.example.restservice.Repository.AnnonceRepository;
 import com.example.restservice.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,17 +39,26 @@ public class AnnonceController {
     private AnnonceService annonceService;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private SearchService searchService;
+
+    @Autowired
     private AnnonceRepository annonceRepository;
     
     @GetMapping
-    public Object getAllAnnonces(HttpServletRequest request, Model model) {
+    public Object getAllAnnonces(HttpServletRequest request, Model model,Authentication authentication) {
         List<Annonce> annonces = annonceService.getAllAnnonces();
-        
+
+
         if (request.getHeader("Accept") != null && request.getHeader("Accept").contains(MediaType.APPLICATION_JSON_VALUE)) {
             return annonces; 
         }
 
         model.addAttribute("annonces", annonces);
+
+
         return "annonces"; 
     }
     @GetMapping("/mesannonces")
@@ -72,12 +86,64 @@ public class AnnonceController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User user = userDetails.getUser();
         
-        
+        List<Search> searchList =searchService.getSearchesByAnnonce(annonce);
+        List<User> users = searchList.stream()
+        .map(search -> search.getUser())
+        .distinct()
+        .collect(Collectors.toList());
+
+    
+        System.out.println("Oui");
+        System.out.println(users);
+
         annonceService.createAnnonce(annonce, user);
-       // user.addAnnonces();
+        
+        users.forEach(u -> {
+            Notification notif=new Notification();
+            notif.setStatus(1);
+            notif.setMessage("Vous avez un produit qui correspond à vos recherche");
+            if (u.getId() != user.getId() && u.isHasNotification())
+            {
+                notificationService.createNotification(notif, u, annonce);
+            }
+        });
+
         return "redirect:/annonces";
     }
+    @DeleteMapping("search/{id}")
+    public ResponseEntity<String> deleteSearch(@PathVariable Long id, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Non");
+        }
 
+        // Récupérer l'utilisateur connecté
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currentUser = userDetails.getUser();
+
+        Search search=searchService.getSearch(id);
+        if (search == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Non");
+        // Vérifier si l'utilisateur connecté est bien le créateur de l'annonce
+        if (!search.getUser().getId().equals(currentUser.getId())) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this annonce");
+        }
+        searchService.deleteSearch(id);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Supprimer");
+    }
+    
+    @GetMapping("/{id}")
+    public Object getAnnonces(@PathVariable Long id, Model model,Authentication authentication) {
+        Annonce annonce = annonceService.findAnnonceById(id);
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";  
+        }
+
+        model.addAttribute("annonce", annonce);
+
+
+        return "annonce"; 
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAnnonce(@PathVariable Long id, Authentication authentication) {
         // Vérifier que l'utilisateur est authentifié
@@ -116,6 +182,36 @@ public class AnnonceController {
         model.addAttribute("annonces", annonces);
         return "searchAnnonce"; 
     }
+    
+    @PostMapping("/search")
+    public ResponseEntity<String> saveSearch(
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) List<String> zone,
+            @RequestParam(required = false) List<String> keywords,
+            @RequestParam(required = false) String date,
+            Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+        
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currentUser = userDetails.getUser();
+
+        // Traitez les données reçues
+        System.out.println("State: " + state);
+        System.out.println("Zone: " + zone);
+        System.out.println("Keywords: " + keywords);
+        System.out.println("Date: " + date);
+
+        Search search= new Search(currentUser, zone, keywords, state, date);
+        searchService.saveSearch(search, currentUser);
+
+        // Retournez une réponse appropriée
+        return ResponseEntity.status(200).body("Enregistrement Réussi");
+    }
+   
+
     @GetMapping("/api/keywords")
     public ResponseEntity<Set<String>> getKeywords() {
 

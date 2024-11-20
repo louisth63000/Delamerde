@@ -31,6 +31,15 @@ public class User implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "panier_id", referencedColumnName = "id")
     private Card card;
+    private boolean hasNotification;
+    
+
+    @PrePersist
+    public void prePersist() {
+        if (hasNotification == false) {
+            hasNotification = true;
+        }
+    }
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Annonce> annonces = new ArrayList<>();

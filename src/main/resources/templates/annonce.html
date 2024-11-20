@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Liste des Annonces</title>
+    <title>Annonce</title>
 </head>
 <body>
-    <h1>Liste des Annonces</h1>
-    <div th:if="${annonces.empty}">
+    <h1>Annonce</h1>
+    <div th:if="${annonce == null}">
         <p>Aucune annonce n'est disponible pour le moment.</p>
     </div>
-    <div th:if="${!annonces.empty}">
+    <div th:if="${annonce != null}">
     <table>
         <thead>
             <tr>
@@ -19,11 +19,10 @@
                 <th>Zone</th>
                 <th>En main propre</th>
                 <th>Mots-clés</th>
-                <th>User id</th>
             </tr>
         </thead>
         <tbody>
-            <tr th:each="annonce : ${annonces}">
+            <tr>
                 <td th:text="${annonce.title}"></td>
                 <td th:text="${annonce.description}"></td>
                 <td th:text="${annonce.state}"></td>
@@ -34,16 +33,7 @@
                     <ul>
                         <li th:each="keyword : ${annonce.keywords}" th:text="${keyword}"></li>
                     </ul>
-                </td>
-                <td>
-                    <form th:action="@{/card/annonce/{annonceId}(annonceId=${annonce.id})}" method="post">
-                        <button type="submit">Ajouter au Panier</button>
-                    </form>
-                </td>
-                <td>
-                    <a th:href="@{/conversations/{id}(id=${annonce.user.id})}" >Contacter</a>
-                </td>
-               
+                </td> 
             </tr>
         </tbody>
     </table>
