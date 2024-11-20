@@ -27,6 +27,10 @@ public class User implements UserDetails {
 
     private String email;
 
+    // Relation un-à-un avec Panier
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "panier_id", referencedColumnName = "id")
+    private Card card;
     private boolean hasNotification;
     
 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mon Panier</title>
+</head>
+<body>
+<h1>Votre Panier</h1>
+
+
+<!-- test if card is empty -->
+<div th:if="${card.isEmpty()}">
+    <p>Votre panier est vide.</p>
+</div>
+
+<div th:each="lot, i : ${card.lots}">
+    <h2>Lot n°<span th:text="${i.index + 1}"></span> : <span th:text="${lot.user.username}"></span></h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="annonce : ${lot.annonces}">
+            <td th:text="${annonce.title}"></td>
+            <td th:text="${annonce.description}"></td>
+            <td>
+                <form th:action="@{/card/annonce/{annonceId}(annonceId=${annonce.id})}" method="post">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="submit" value="Supprimer">
+                </form>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
