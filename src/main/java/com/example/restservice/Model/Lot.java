@@ -1,8 +1,9 @@
 package com.example.restservice.Model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,16 +16,14 @@ public class Lot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relation avec le panier
     @ManyToOne
     @JoinColumn(name = "Card_id")
     private Card card;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;  // Un lot est lié à un utilisateur
+    private User user;
 
-    // Liste des annonces dans le lot
     @ManyToMany
     @JoinTable(
             name = "lot_annonces",
@@ -37,7 +36,6 @@ public class Lot {
         this.card = card;
     }
 
-    // Getter et setter pour la liste des annonces
     public List<Annonce> getAnnonces() {
         return annonces;
     }

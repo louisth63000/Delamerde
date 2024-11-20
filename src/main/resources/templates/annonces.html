@@ -35,8 +35,7 @@
                     </ul>
                 </td>
                 <td>
-                    <form th:action="@{/card/ajouter-annonce}" method="post">
-                        <input type="hidden" name="annonceId" th:value="${annonce.id}" />
+                    <form th:action="@{/card/annonce/{annonceId}(annonceId=${annonce.id})}" method="post">
                         <button type="submit">Ajouter au Panier</button>
                     </form>
                 </td>
