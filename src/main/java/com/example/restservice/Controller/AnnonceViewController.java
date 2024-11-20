@@ -1,5 +1,5 @@
 package com.example.restservice.Controller;
-/*
+
 import com.example.restservice.Model.Annonce;
 import com.example.restservice.Model.CustomUserDetails;
 import com.example.restservice.Model.Notification;
@@ -121,4 +121,3 @@ public class AnnonceViewController {
             return "redirect:/annonces";
         }
 }
-*/

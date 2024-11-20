@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @RestController
-@RequestMapping("/annonces")
+@RequestMapping("/api/annonces")
 public class AnnonceController {
 
     @Autowired
@@ -49,14 +49,6 @@ public class AnnonceController {
     @Autowired
     private AnnonceRepository annonceRepository;
 
-
-     @GetMapping
-    public String afficherToutesLesAnnonces(Model model) {
-        List<Annonce> annonces = annonceService.getAllAnnonces();
-        model.addAttribute("annonces", annonces);
-        return "annonces"; // Vue Thymeleaf
-    }
-
     
     @GetMapping("/{id}")
     public Object getAnnonces(@PathVariable Long id, Model model,Authentication authentication) {
@@ -69,43 +61,33 @@ public class AnnonceController {
         model.addAttribute("annonce", annonce);
 
 
-        return "annonce"; 
+        return ResponseEntity.ok(annonce);
     }
 
     
     
 
-   /* // Récupérer toutes les annonces
+    // Récupérer toutes les annonces
     @GetMapping
     public ResponseEntity<List<Annonce>> getAllAnnonces() {
         List<Annonce> annonces = annonceService.getAllAnnonces();
         return ResponseEntity.ok(annonces);
     }
-    */
+    
     // Récupérer les annonces de l'utilisateur connecté
     @GetMapping("/mesannonces")
     @Transactional
     public ResponseEntity<Object> getMyAnnonces(HttpServletRequest request,Model model,Authentication authentication) {
-        String acceptHeader = request.getHeader("Accept");
+        
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); 
         }
-        if (acceptHeader != null && acceptHeader.contains(MediaType.APPLICATION_JSON_VALUE)) {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            User user = userDetails.getUser();
-            List<Annonce> annonces = annonceService.findAnnoncesByUser(user);
-            return ResponseEntity.ok(annonces);
-        }
-        else{
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            User user = userDetails.getUser();
-    
-            List<Annonce> annonces = annonceService.findAnnoncesByUser(user);
-            user.setAnnonces(annonces);
-            model.addAttribute("annonces", annonces);
-            model.addAttribute("user", user);
-            return ResponseEntity.ok().body("annonces");
-        }
+        
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
+        List<Annonce> annonces = annonceService.findAnnoncesByUser(user);
+        return ResponseEntity.ok(annonces);
+        
     }
 
     // Créer une annonce
@@ -228,25 +210,12 @@ public class AnnonceController {
             Model model,
             HttpServletRequest request) {
         List<Annonce> annonces = annonceService.searchAnnonces(zone, state, keywords, date);
-        String acceptHeader = request.getHeader("Accept");
-        if (acceptHeader != null && acceptHeader.contains(MediaType.APPLICATION_JSON_VALUE)) {
-            return ResponseEntity.ok(annonces);
-        }
-        model.addAttribute("annonces", annonces);
-        return  ResponseEntity.ok().body("searchAnnonces");
+        
+        return ResponseEntity.ok(annonces);
+        
         
     }
-    /*@GetMapping("/search")
-    public String searchAnnonces(
-        @RequestParam(required = false) String[] zone,
-        @RequestParam(required = false) String state,
-        @RequestParam(required = false) List<String> keywords,
-        @RequestParam(required = false) String date,
-        Model model) {
-        List<Annonce> annonces = annonceService.searchAnnonces(zone, state, keywords,date);
-        model.addAttribute("annonces", annonces);
-        return "searchAnnonce"; 
-    } */
+    
     // Récupérer les mots-clés
     @GetMapping("/keywords")
     public ResponseEntity<Set<String>> getKeywords() {
