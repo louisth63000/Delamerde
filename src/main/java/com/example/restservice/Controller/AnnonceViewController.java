@@ -1,5 +1,6 @@
 package com.example.restservice.Controller;
 
+import org.springframework.http.MediaType;
 import com.example.restservice.Model.Annonce;
 import com.example.restservice.Model.CustomUserDetails;
 import com.example.restservice.Model.Notification;
@@ -46,7 +47,7 @@ public class AnnonceViewController {
         return "annonces"; // Vue Thymeleaf
     }
 
-    @GetMapping("/mesannonces")
+    @GetMapping(value ="/mesannonces", produces = MediaType.TEXT_HTML_VALUE)
     @Transactional
     public String afficherMesAnnonces(Model model, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -62,7 +63,7 @@ public class AnnonceViewController {
         return "mesannonces";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value ="/{id}", produces = MediaType.TEXT_HTML_VALUE)
     public Object getAnnonces(@PathVariable Long id, Model model,Authentication authentication) {
         Annonce annonce = annonceService.findAnnonceById(id);
 
@@ -76,7 +77,7 @@ public class AnnonceViewController {
         return "annonce"; 
     }
 
-    @GetMapping("/search")
+    @GetMapping(value = "/search", produces = MediaType.TEXT_HTML_VALUE)
     public String searchAnnonces(
         @RequestParam(required = false) String[] zone,
         @RequestParam(required = false) String state,
@@ -87,7 +88,7 @@ public class AnnonceViewController {
         model.addAttribute("annonces", annonces);
         return "searchAnnonce"; 
     }
-    @PostMapping
+    @PostMapping(produces = MediaType.TEXT_HTML_VALUE)
     public Object createAnnonce(@RequestBody Annonce annonce, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

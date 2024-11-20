@@ -1,5 +1,6 @@
 package com.example.restservice.Controller;
 
+import org.springframework.http.MediaType;
 import com.example.restservice.DTO.UserRegistrationDTO;
 import com.example.restservice.Model.Annonce;
 import com.example.restservice.Model.CustomUserDetails;
@@ -50,7 +51,7 @@ public class AnnonceController {
     @Autowired
     private AnnonceRepository annonceRepository;
     
-    @GetMapping("/{id}")
+    @GetMapping(value ="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Object getAnnonces(@PathVariable Long id, Model model,Authentication authentication) {
         Annonce annonce = annonceService.findAnnonceById(id);
 
@@ -68,7 +69,7 @@ public class AnnonceController {
     
 
     // Récupérer toutes les annonces
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Annonce>> getAllAnnonces() {
         List<Annonce> annonces = annonceService.getAllAnnonces();
         return ResponseEntity.ok(annonces);
@@ -76,7 +77,7 @@ public class AnnonceController {
     
 
     // Récupérer les annonces de l'utilisateur connecté
-    @GetMapping("/mesannonces")
+    @GetMapping(value ="/mesannonces",produces= MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ResponseEntity<Object> getMyAnnonces(HttpServletRequest request,Model model,Authentication authentication) {
         
@@ -93,7 +94,7 @@ public class AnnonceController {
     }
 
     // Créer une annonce
-    @PostMapping
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Annonce> createAnnonce(@RequestBody Annonce annonce, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -203,7 +204,7 @@ public class AnnonceController {
     
 
     // Recherche des annonces
-    @GetMapping("/search")
+    @GetMapping(value = "/search",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> searchAnnonces(
             @RequestParam(required = false) String[] zone,
             @RequestParam(required = false) String state,
