@@ -156,17 +156,6 @@ function handleFetch(url, options, successMessage, errorMessage) {
         });
 }
 
-document.querySelector('form').addEventListener('submit', function (event) {
-    event.preventDefault();
-    handleFetch('/api/submit', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    }, responseMessages.SUCCESS, 'Erreur lors de la requête');
-});
-
 function changeStatus(checkbox, notificationId) {
     const status = checkbox.checked ? 1 : 0;
     handleFetch(`/notifications/${notificationId}/status`, {
