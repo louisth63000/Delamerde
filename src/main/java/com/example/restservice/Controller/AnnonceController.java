@@ -69,7 +69,7 @@ public class AnnonceController {
     
 
     // Récupérer toutes les annonces
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, "application/x-yaml"})
     public ResponseEntity<List<Annonce>> getAllAnnonces() {
         List<Annonce> annonces = annonceService.getAllAnnonces();
         return ResponseEntity.ok(annonces);
@@ -77,7 +77,7 @@ public class AnnonceController {
     
 
     // Récupérer les annonces de l'utilisateur connecté
-    @GetMapping(value ="/mesannonces",produces= MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value ="/mesannonces",produces= {MediaType.APPLICATION_JSON_VALUE, "application/x-yaml"})
     @Transactional
     public ResponseEntity<Object> getMyAnnonces(HttpServletRequest request,Model model,Authentication authentication) {
         
@@ -204,7 +204,7 @@ public class AnnonceController {
     
 
     // Recherche des annonces
-    @GetMapping(value = "/search",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/search",produces = {MediaType.APPLICATION_JSON_VALUE, "application/x-yaml"})
     public ResponseEntity<Object> searchAnnonces(
             @RequestParam(required = false) String[] zone,
             @RequestParam(required = false) String state,

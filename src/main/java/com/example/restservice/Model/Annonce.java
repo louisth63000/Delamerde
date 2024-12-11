@@ -34,12 +34,12 @@ public class Annonce {
     private LocalDateTime publicationDate;
     
     private String zone;
-    private boolean isHandDelivery;
+    
 
     @ElementCollection
     private List<String> keywords =new ArrayList<>();
     
-
+    private boolean isHandDelivery;
     
     public Annonce() {
        
