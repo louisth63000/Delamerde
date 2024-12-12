@@ -44,6 +44,10 @@ public class SearchService  {
         Specification<Search> spec = SearchSpecification.getAllSearchByUser(user);
         return searchRepository.findAll(spec, pageable);
     }
+   public List<Search> getAllSearchs()
+  {
+    return searchRepository.findAll();
+  }  
     public List<Search> getSearchesByAnnonce(Annonce annonce) {
         
         Specification<Search> spec = SearchSpecification.getAllSearchByAnnonce(annonce);

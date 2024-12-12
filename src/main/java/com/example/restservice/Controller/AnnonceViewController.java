@@ -41,9 +41,16 @@ public class AnnonceViewController {
     private SearchService searchService;
 
     @GetMapping
-    public String afficherToutesLesAnnonces(Model model) {
+    public String afficherToutesLesAnnonces(Model model, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";  
+        }
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
+
         List<Annonce> annonces = annonceService.getAllAnnonces();
         model.addAttribute("annonces", annonces);
+        model.addAttribute("user", user);
         return "annonces"; // Vue Thymeleaf
     }
 

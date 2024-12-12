@@ -43,11 +43,11 @@ public class HomeController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User currentUser = userDetails.getUser();
         
-        Page<Search> searchPage = searchService.getSearchesByUser(currentUser, 1, 10);
+        Page<Search> searchPage = searchService.getSearchesByUser(currentUser, 0, 10);
         List<Notification> notifs = notificationService.getNotificationsByUser(currentUser);
         List<User> users = messageService.findUsersCommunicatedWith(currentUser);
-
-
+        List<Search> searches = searchService.getAllSearchs();
+    
         model.addAttribute("users", users);
         model.addAttribute("notifications", notifs);
         model.addAttribute("searchs", searchPage.getContent());

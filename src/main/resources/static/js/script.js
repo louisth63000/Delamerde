@@ -1,6 +1,6 @@
 const responseMessages = {
-    SUCCESS: "Bravo",
-    FAILURE: "Nulllll"
+    SUCCESS: "Succès",
+    FAILURE: "Erreur lors de la requête"
 };
 //A faire évoluer
 

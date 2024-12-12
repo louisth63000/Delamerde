@@ -42,7 +42,10 @@
                     </form>
                 </td>
                 <td>
-                    <a th:href="@{/conversations/{id}(id=${annonce.user.id})}" >Contacter</a>
+                    <div th:if="${user.id != annonce.user.id}">
+                        <a th:href="@{/conversations/{id}(id=${annonce.user.id})}" >Contacter</a>
+                    </div>
+                    
                 </td>
                
             </tr>
