@@ -2,11 +2,8 @@ package com.example.restservice.Controller;
 
 import java.util.List;
 
-import javax.print.DocFlavor.READER;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +25,7 @@ import com.example.restservice.Service.MessageService;
 
 @Controller
 @RequestMapping("/conversations")
-public class ConversationController {
+public class ConversationViewController {
     
     @Autowired
     private  MessageService messageservice;
@@ -36,10 +33,10 @@ public class ConversationController {
     @Autowired
     private  CustomUserDetailsService userservice;
 
-    @GetMapping(value = "/{id}",produces ={MediaType.APPLICATION_JSON_VALUE,"application/x-yaml"} )    
-    public ResponseEntity<Object> getAllAnnonces(@PathVariable Long id,Model model,Authentication authentication) {
+    @GetMapping(value = "/{id}",produces = MediaType.TEXT_HTML_VALUE)
+    public Object getAllAnnonces(@PathVariable Long id,Model model,Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).build();  
+            return "redirect:/login";  
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -49,7 +46,7 @@ public class ConversationController {
 
         if (user2 == null || user2.getId() == user.getId())
         {
-            return ResponseEntity.status(401).build(); 
+            return "redirect:/";  
         }
 
         List<Message> messages = messageservice.findMessagesBetweenUsers(user,user2);
@@ -63,14 +60,13 @@ public class ConversationController {
         model.addAttribute("id", id);
 
 
-        return ResponseEntity.ok(messages);
+        return "conversation"; 
     }
-    
-    @PostMapping("/messages/create")
-    public ResponseEntity<Object>  sendMessage(@RequestParam String id,@RequestParam String message,Authentication authentication, RedirectAttributes redirectAttributes) {
+    @PostMapping(value = "/messages/create",produces = MediaType.TEXT_HTML_VALUE)
+    public String sendMessage(@RequestParam String id,@RequestParam String message,Authentication authentication, RedirectAttributes redirectAttributes) {
         
         if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).build(); 
+            return "redirect:/login";  
         }
 
         Long conversationId = Long.parseLong(id);
@@ -82,7 +78,7 @@ public class ConversationController {
 
         if (user2 == null || user2.getId() == user.getId())
         {
-            return ResponseEntity.status(401).build();
+            return "redirect:/";  
         }
 
         Message message_Message= new Message();
@@ -97,7 +93,7 @@ public class ConversationController {
         // Ajoutez un message de confirmation à la vue
         redirectAttributes.addFlashAttribute("confirmation", "Message sent successfully!");
 
-        return ResponseEntity.ok().build();
+        return "redirect:/conversations/" + id;
     }
 
 

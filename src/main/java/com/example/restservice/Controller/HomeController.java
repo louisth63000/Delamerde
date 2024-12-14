@@ -32,7 +32,7 @@ public class HomeController {
     @Autowired
     private MessageService messageService; 
 
-    @GetMapping("/")
+    @GetMapping(value = "/",produces = MediaType.TEXT_HTML_VALUE)
     public String index(HttpServletRequest request, Model model, Authentication authentication  ) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -46,7 +46,7 @@ public class HomeController {
         Page<Search> searchPage = searchService.getSearchesByUser(currentUser, 0, 10);
         List<Notification> notifs = notificationService.getNotificationsByUser(currentUser);
         List<User> users = messageService.findUsersCommunicatedWith(currentUser);
-        List<Search> searches = searchService.getAllSearchs();
+
     
         model.addAttribute("users", users);
         model.addAttribute("notifications", notifs);

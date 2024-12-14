@@ -2,6 +2,7 @@ package com.example.restservice.Controller;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +49,18 @@ public class NotificationController {
         notification.setStatus(0);
         notificationService.changestatus(notification);
         return ResponseEntity.ok("La notification a changé ");
+    }
+    @GetMapping(value = "/All",produces ={MediaType.APPLICATION_JSON_VALUE,"application/x-yaml"} )
+    public ResponseEntity<List<Notification>> getNotificationsByUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currentUser = userDetails.getUser();
+        List<Notification> notifs = notificationService.getNotificationsByUser(currentUser);
+
+        return ResponseEntity.ok(notifs);
     }
     
 
