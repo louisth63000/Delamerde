@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -25,11 +26,7 @@ public class Lot {
     private User user;
 
     @ManyToMany
-    @JoinTable(
-            name = "lot_annonces",
-            joinColumns = @JoinColumn(name = "lot_id"),
-            inverseJoinColumns = @JoinColumn(name = "annonce_id")
-    )
+    @JoinTable(name = "lot_annonces", joinColumns = @JoinColumn(name = "lot_id"), inverseJoinColumns = @JoinColumn(name = "annonce_id"))
     private List<Annonce> annonces = new ArrayList<>();
 
     public void setCard(Card card) {
@@ -43,5 +40,10 @@ public class Lot {
     public void setAnnonces(List<Annonce> annonces) {
         this.annonces = annonces;
     }
-}
 
+    public String getAnnonceTitles() {
+        return annonces.stream()
+                .map(Annonce::getTitle)
+                .collect(Collectors.joining(", "));
+    }
+}

@@ -1,39 +1,48 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Mon Panier</title>
 </head>
+
 <body>
-<h1>Votre Panier</h1>
+    <h1>Votre Panier</h1>
 
+    <div th:if="${card.isEmpty()}">
+        <p>Votre panier est vide.</p>
+    </div>
 
-<!-- test if card is empty -->
-<div th:if="${card.isEmpty()}">
-    <p>Votre panier est vide.</p>
-</div>
-
-<div th:each="lot, i : ${card.lots}">
-    <h2>Lot n°<span th:text="${i.index + 1}"></span> : <span th:text="${lot.user.username}"></span></h2>
-
-    <table>
-        <thead>
-        <tr>
-            <th>Titre</th>
-            <th>Description</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="annonce : ${lot.annonces}">
-            <td th:text="${annonce.title}"></td>
-            <td th:text="${annonce.description}"></td>
-            <td>
-                <form th:action="@{/card/annonce/{annonceId}(annonceId=${annonce.id})}" method="post">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <input type="submit" value="Supprimer">
-                </form>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <div th:if="${!card.isEmpty()}" th:each="lot, i : ${card.lots}">
+        <h2>Lot n°<span th:text="${i.index + 1}"></span> : <span th:text="${lot.user.username}"></span></h2>
+        <table border="1" cellpadding="10" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="annonce : ${lot.annonces}">
+                    <td th:text="${annonce.title}"></td>
+                    <td th:text="${annonce.description}"></td>
+                    <td>
+                        <form th:action="@{/card/annonce/{annonceId}(annonceId=${annonce.id})}" method="post"
+                            style="display:inline;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="submit" value="Supprimer">
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <form th:action="@{/conversations/messages/create}" method="post" style="margin-top: 10px;">
+            <input type="hidden" name="id" th:value="${lot.user.id}">
+            <input type="hidden" name="message"
+                th:value="'Bonjour ' + ${lot.user.username} + ', je suis intéressé par les items suivants : ' + ${lot.getAnnonceTitles} + '.'">
+            <button type="submit">Contacter le vendeur</button>
+        </form>
+    </div>
 </body>
+
 </html>

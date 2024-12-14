@@ -37,9 +37,11 @@
                     </ul>
                 </td>
                 <td>
-                    <form th:action="@{/card/annonce/{annonceId}(annonceId=${annonce.id})}" method="post">
-                        <button type="submit">Ajouter au Panier</button>
-                    </form>
+                    <div th:if="${user.id != annonce.user.id}">
+                        <form th:action="@{/card/annonce/{annonceId}(annonceId=${annonce.id})}" method="post">
+                            <button type="submit">Ajouter au Panier</button>
+                        </form>
+                    </div>
                 </td>
                 <td>
                     <div th:if="${user.id != annonce.user.id}">
