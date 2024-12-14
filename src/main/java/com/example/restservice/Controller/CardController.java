@@ -76,6 +76,22 @@ public class CardController {
 
         return "redirect:/card";
     }
+
+    @DeleteMapping("/lot/{lotId}")
+    public String removeLotFromCard(@PathVariable Long lotId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
+
+        cardService.removeLot(user.getId(), lotId);
+
+        return "redirect:/card";
+    }
 }
 
 

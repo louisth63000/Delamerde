@@ -32,7 +32,6 @@ public class CardService {
         return user.getCard();
     }
 
-
     public void addAnnonce(Long userId, Long annonceId) {
 
         Card card = getCardByUserId(userId);
@@ -85,5 +84,19 @@ public class CardService {
         }
 
         cardRepository.save(card);
+    }
+
+    public void removeLot(Long userId, Long lotId) {
+        Card card = cardRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Panier non trouvé pour cet utilisateur"));
+
+        if (card != null) {
+            Lot lot = lotRepository.findById(lotId).orElse(null);
+            if (lot != null && lot.getCard().getId().equals(card.getId())) {
+                card.getLots().remove(lot);
+                lotRepository.delete(lot);
+                cardRepository.save(card);
+            }
+        }
     }
 }

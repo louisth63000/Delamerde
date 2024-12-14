@@ -42,6 +42,10 @@
                 th:value="'Bonjour ' + ${lot.user.username} + ', je suis intéressé par les items suivants : ' + ${lot.getAnnonceTitles} + '.'">
             <button type="submit">Contacter le vendeur</button>
         </form>
+        <form th:action="@{/card/lot/{lotId}(lotId=${lot.id})}" method="post" style="margin-top: 10px;">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit">Supprimer le lot</button>
+        </form>
     </div>
 </body>
 
