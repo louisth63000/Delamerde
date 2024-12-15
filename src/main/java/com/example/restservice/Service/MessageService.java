@@ -45,7 +45,7 @@ public class MessageService {
         List<Message> messages = messageRepository.findByFromOrTo(user, user,pageRequest).getContent();
         return messages.stream()
                 .flatMap(message -> List.of(message.getFrom(), message.getTo()).stream())
-                .filter(u -> !u.equals(user))
+                .filter(u -> !u.getId().equals(user.getId()))
                 .distinct()
                 .collect(Collectors.toList());
     }

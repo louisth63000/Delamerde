@@ -34,6 +34,7 @@
             </thead>
             <tbody>
                 <tr th:each="user : ${users}">
+                    
                     <td th:text="${user.username}"></td>
                     <td>
                         <a th:href="@{/conversations/{id}(id=${user.id})}">Messagerie</a>
