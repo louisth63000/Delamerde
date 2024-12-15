@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,14 +22,17 @@ public class Lot {
 
     @ManyToOne
     @JoinColumn(name = "Card_id")
+    @JsonBackReference
     private Card card;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonBackReference
     private User user;
 
     @ManyToMany
     @JoinTable(name = "lot_annonces", joinColumns = @JoinColumn(name = "lot_id"), inverseJoinColumns = @JoinColumn(name = "annonce_id"))
+    @JsonManagedReference
     private List<Annonce> annonces = new ArrayList<>();
 
     public void setCard(Card card) {

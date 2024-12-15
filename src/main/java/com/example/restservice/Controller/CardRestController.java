@@ -5,27 +5,24 @@ import com.example.restservice.Model.CustomUserDetails;
 import com.example.restservice.Model.User;
 import com.example.restservice.Service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
+@RestController
 @RequestMapping("/card")
-public class CardController {
+public class CardRestController {
 
     @Autowired
     private CardService cardService;
 
-
-    @GetMapping
-    public String showCardConnectedUser(Model model, RedirectAttributes redirectAttributes) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+    @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<Object> getCard(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -33,23 +30,17 @@ public class CardController {
 
         Card card = cardService.getCardByUserId(user.getId());
 
-        if (card != null) {
-            model.addAttribute("card", card);
-            model.addAttribute("user_name", user.getUsername());
-            return "card";
-        } else {
-            return "redirect:/";
+        if (card == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+
+        return ResponseEntity.ok(card);
     }
 
-
-    @PostMapping("/annonce/{annonceId}")
-    public String AddAnnonceinCard(@PathVariable Long annonceId) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+    @PostMapping(value = "/annonce/{annonceId}", produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<Object> addAnnonceToCard(@PathVariable Long annonceId, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -57,16 +48,14 @@ public class CardController {
 
         cardService.addAnnonce(user.getId(), annonceId);
 
-        return "redirect:/card";
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-
-    @DeleteMapping("/annonce/{annonceId}")
-    public String removeAnnonceFromCard(@PathVariable Long annonceId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+    @DeleteMapping(value = "/annonce/{annonceId}", produces = { MediaType.APPLICATION_JSON_VALUE,
+            "application/x-yaml" })
+    public ResponseEntity<Object> removeAnnonceFromCard(@PathVariable Long annonceId, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -74,15 +63,13 @@ public class CardController {
 
         cardService.removeAnnonce(user.getId(), annonceId);
 
-        return "redirect:/card";
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/lot/{lotId}")
-    public String removeLotFromCard(@PathVariable Long lotId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+    @DeleteMapping(value = "/lot/{lotId}", produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<Object> removeLotFromCard(@PathVariable Long lotId, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -90,8 +77,6 @@ public class CardController {
 
         cardService.removeLot(user.getId(), lotId);
 
-        return "redirect:/card";
+        return ResponseEntity.ok().build();
     }
 }
-
-

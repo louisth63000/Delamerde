@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -33,6 +34,7 @@ public class User implements UserDetails {
     // Relation un-à-un avec Panier
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "panier_id", referencedColumnName = "id")
+    @JsonManagedReference
     private Card card;
     private boolean hasNotification;
     
