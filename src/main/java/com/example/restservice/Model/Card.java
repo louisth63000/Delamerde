@@ -1,7 +1,5 @@
 package com.example.restservice.Model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,11 +18,9 @@ public class Card {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Lot> lots = new ArrayList<>();
 
     public List<Lot> getLots() {
